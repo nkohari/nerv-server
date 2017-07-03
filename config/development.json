@@ -1,0 +1,9 @@
+{
+  "DB_HOST": "localhost",
+  "DB_PORT": 5432,
+  "DB_USER": "mineboss",
+  "DB_PASSWORD": "mineboss",
+  "DB_DATABASE": "mineboss",
+  "DB_TLS": false,
+  "SECRET": "that's a spicy meatball"
+}
