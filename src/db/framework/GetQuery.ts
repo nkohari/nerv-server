@@ -1,28 +1,23 @@
 import * as knex from 'knex';
 import { Statement } from './Statement';
 import Model from './Model';
-
-interface ModelConstructor<T extends Model> {
-  new(data?: any): T;
-}
+import { ModelClass } from './ModelClass';
 
 abstract class GetQuery<T extends Model> implements Statement<T> {
 
-  modelType: ModelConstructor<T>;
-  table: string;
+  modelClass: ModelClass<T>;
   spec: object;
 
-  constructor(modelType: ModelConstructor<T>, table: string, spec: object) {
-    this.modelType = modelType;
-    this.table = table;
+  constructor(modelClass: ModelClass<T>, spec: object) {
+    this.modelClass = modelClass;
     this.spec = spec;
   }
 
   execute(connection: knex): Promise<T> {
-    return connection(this.table)
+    return connection(this.modelClass.table)
     .select('*')
     .where(this.spec)
-    .then(data => new this.modelType(data[0]));
+    .then(rows => (rows.length === 0) ? null : new this.modelClass(rows[0]));
   }
 
 }

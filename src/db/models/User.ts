@@ -2,6 +2,8 @@ import Model from '../framework/Model';
 
 class User extends Model {
 
+  static table = 'users';
+
   id: string;
   username: string;
   password: string;
