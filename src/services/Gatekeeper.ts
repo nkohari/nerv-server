@@ -1,9 +1,9 @@
 import { Request } from 'hapi';
-import { Database, GetUserQuery } from '../db';
-import { AuthToken } from '../framework';
 import * as Boom from 'boom';
+import { Database, User, GetUserQuery } from '../db';
+import { AuthToken } from '../framework';
 
-type AuthorizeCallback = (err: Error, isValid: boolean, credentials: any) => any;
+type AuthorizeCallback = (err: Error, isValid: boolean, credentials: User) => any;
 
 class Gatekeeper {
 
@@ -16,7 +16,7 @@ class Gatekeeper {
   authorize(request: Request, token: AuthToken, callback: AuthorizeCallback) {
     const { userid } = request.params;
 
-    if (userid && token.scopes.indexOf(userid) === -1) {
+    if (userid && token.id !== userid) {
       return callback(Boom.forbidden("You don't have access to that resource"), false, null);
     }
 

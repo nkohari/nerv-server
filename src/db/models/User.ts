@@ -6,6 +6,13 @@ class User extends Model {
   username: string;
   password: string;
 
+  toJSON() {
+    return {
+      id: this.id,
+      username: this.username
+    };
+  }
+
 }
 
 export default User;

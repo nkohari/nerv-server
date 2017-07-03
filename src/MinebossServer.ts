@@ -2,7 +2,7 @@ import * as nconf from 'nconf';
 import * as hapiAuthJwt from 'hapi-auth-jwt';
 import * as Forge from 'forge-di';
 import * as Logger from 'bunyan';
-import { Server, HTTP_METHODS_PARTIAL } from 'hapi';
+import { Server, ServerConnectionOptions, HTTP_METHODS_PARTIAL } from 'hapi';
 import { Handler, HandlerClass } from './framework';
 import { Gatekeeper } from './services';
 import routes from './routes';
@@ -25,10 +25,21 @@ class MinebossServer {
       debug: process.env.NODE_ENV === 'development' ? { request: ['error'] } : null
     });
 
-    this.server.connection({
+    const options: ServerConnectionOptions = {
       address: '0.0.0.0',
       port: nconf.get('PORT')
-    });
+    };
+
+    if (nconf.get('ALLOWED_ORIGINS')) {
+      options.routes = {
+        cors: {
+          origin: nconf.get('ALLOWED_ORIGINS').split(','),
+          additionalHeaders: ['Accept-Language']
+        }
+      };
+    }
+
+    this.server.connection(options);
 
     this.server.on('request-error', (request, err) => {
       this.log.error(err);
@@ -49,7 +60,7 @@ class MinebossServer {
 
   configureAuth() {
     this.server.auth.strategy('jwt', 'jwt', 'required', {
-      key: nconf.get('SECRET'),
+      key: nconf.get('AUTH_SECRET'),
       validateFunc: (request, token, callback) => this.gatekeeper.authorize(request, token, callback),
       verifyOptions: {
         algorithms: ['HS256']

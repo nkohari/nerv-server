@@ -3,8 +3,8 @@ import { LoginHandler, GetUserHandler, CreateUserHandler } from './handlers';
 
 const routes: RouteMap = {
   'post /login': LoginHandler,
-  'get /users/{userid}': GetUserHandler,
-  'post /users': CreateUserHandler
+  'post /users': CreateUserHandler,
+  'get /users/{userid}': GetUserHandler
 };
 
 export default routes;

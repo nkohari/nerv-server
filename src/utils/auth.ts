@@ -20,9 +20,9 @@ export function createToken(user: User): string {
     username: user.username,
     scopes: [ user.id ]
   };
-  return jwt.sign(payload, nconf.get('SECRET'), { algorithm: 'HS256', expiresIn: '24h' });
+  return jwt.sign(payload, nconf.get('AUTH_SECRET'), { algorithm: 'HS256', expiresIn: '24h' });
 }
 
 export function verifyToken(token: string): AuthToken {
-  return <AuthToken> jwt.verify(token, nconf.get('SECRET'), { algorithms: ['HS256'] });
+  return <AuthToken> jwt.verify(token, nconf.get('AUTH_SECRET'), { algorithms: ['HS256'] });
 }

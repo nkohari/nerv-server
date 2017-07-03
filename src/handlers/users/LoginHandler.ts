@@ -19,7 +19,10 @@ class LoginHandler extends Handler {
           if (!matches) {
             reply(401);
           } else {
-            reply({ id_token: createToken(user) });
+            reply({
+              user,
+              token: createToken(user)
+            });
           }
         });
       }
