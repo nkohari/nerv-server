@@ -1,7 +1,7 @@
 import { Request } from 'hapi';
 import * as Boom from 'boom';
-import { Database, User, GetUserQuery } from '../db';
-import { AuthToken } from '../framework';
+import { Database, User, GetQuery } from '../../db';
+import { AuthToken } from '../framework/AuthToken';
 
 type AuthorizeCallback = (err: Error, isValid: boolean, credentials: User) => any;
 
@@ -20,7 +20,7 @@ class Gatekeeper {
       return callback(Boom.forbidden("You don't have access to that resource"), false, null);
     }
 
-    const query = new GetUserQuery(token.id);
+    const query = new GetQuery(User, token.id);
     this.database.execute(query).then(user => {
       if (!user) {
         callback(Boom.badRequest('Invalid token'), false, null);

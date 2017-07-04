@@ -1,10 +1,7 @@
 import Handler from './Handler';
 
-interface HandlerConfig {
-  auth: string | boolean;
-}
-
 export interface HandlerClass {
-  config?: HandlerConfig;
+  auth?: any;
+  pre?: any[];
   new (...args: any[]): Handler;
 }

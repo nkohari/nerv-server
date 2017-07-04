@@ -2,9 +2,7 @@ import * as Logger from 'bunyan';
 import Forge from 'forge-di';
 import { Database } from './db';
 import { Application, Environment } from './framework';
-import { Gatekeeper } from './services';
-import MinebossServer from './MinebossServer';
-import routes from './routes';
+import { MinebossServer, Gatekeeper, Keymaster, routes } from './http';
 
 class ServerEnvironment implements Environment {
 
@@ -17,6 +15,7 @@ class ServerEnvironment implements Environment {
     forge.bind('server').to.type(MinebossServer);
     forge.bind('database').to.type(Database);
     forge.bind('gatekeeper').to.type(Gatekeeper);
+    forge.bind('keymaster').to.type(Keymaster);
 
     Object.keys(routes).forEach(route => {
       forge.bind('handler').to.type(routes[route]).when(route);

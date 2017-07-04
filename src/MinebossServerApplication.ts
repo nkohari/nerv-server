@@ -1,5 +1,5 @@
 import { Application, Environment } from './framework';
-import MinebossServer from './MinebossServer';
+import MinebossServer from './http/MinebossServer';
 import MinebossServerEnvironment from './MinebossServerEnvironment';
 
 class MinebossServerApplication extends Application {

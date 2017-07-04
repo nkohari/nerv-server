@@ -3,8 +3,9 @@ import * as hapiAuthJwt from 'hapi-auth-jwt';
 import * as Forge from 'forge-di';
 import * as Logger from 'bunyan';
 import { Server, ServerConnectionOptions, HTTP_METHODS_PARTIAL } from 'hapi';
-import { Handler, HandlerClass } from './framework';
-import { Gatekeeper } from './services';
+import Gatekeeper from './services/Gatekeeper';
+import Handler from './framework/Handler';
+import { HandlerClass } from './framework/HandlerClass';
 import routes from './routes';
 
 class MinebossServer {
@@ -45,16 +46,17 @@ class MinebossServer {
       this.log.error(err);
     });
 
-    Object.keys(routes).forEach(route => {
-      const tokens = route.split(' ', 2);
-      const handler = this.forge.get<Handler>('handler', route);
-      this.addHandler(tokens[0], tokens[1], routes[route], handler);
-    });
-
     return this.server.register([
       hapiAuthJwt
     ])
     .then(() => this.configureAuth())
+    .then(() => {
+      for (let route in routes) {
+        const tokens = route.split(' ', 2);
+        const handler = this.forge.get<Handler>('handler', route);
+        this.addHandler(tokens[0], tokens[1], routes[route], handler);
+      }
+    })
     .then(() => this.server.start());
   }
 
@@ -70,10 +72,13 @@ class MinebossServer {
 
   addHandler(verb: string, path: string, handlerClass: HandlerClass, handler: Handler) {
     const name = (<any> handlerClass).name;
+
     const config = {
       json: { space: 2 },
-      ...handlerClass.config
+      auth: (handlerClass.auth != null) ? handlerClass.auth : { mode: 'required' },
+      pre: (handlerClass.pre != null) ? handlerClass.pre : null
     };
+
     this.server.route({
       method: <HTTP_METHODS_PARTIAL> verb,
       path,

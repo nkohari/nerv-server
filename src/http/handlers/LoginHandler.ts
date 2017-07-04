@@ -1,27 +1,26 @@
 import { Request, ReplyNoContinue } from 'hapi';
-import { Handler } from '../../framework';
-import { GetUserByUsernameQuery } from '../../db';
-import { createToken, verifyPassword } from '../../utils/auth';
+import Handler from '../framework/Handler';
+import { User, GetQuery } from '../../db';
 
 class LoginHandler extends Handler {
 
-  static config = { auth: false };
+  static auth = false;
 
   handle(request: Request, reply: ReplyNoContinue) {
     const { username, password } = request.payload;
 
-    const query = new GetUserByUsernameQuery(username);
+    const query = new GetQuery(User, { username });
     this.database.execute(query).then(user => {
       if (!user) {
         reply(401);
       } else {
-        return verifyPassword(user.password, password).then(matches => {
+        return this.keymaster.verifyPassword(user.password, password).then(matches => {
           if (!matches) {
             reply(401);
           } else {
             reply({
               user,
-              token: createToken(user)
+              token: this.keymaster.createToken(user)
             });
           }
         });

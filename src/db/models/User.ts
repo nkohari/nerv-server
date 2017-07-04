@@ -4,13 +4,11 @@ class User extends Model {
 
   static table = 'users';
 
-  id: string;
   username: string;
   password: string;
 
-  toJSON() {
+  serialize() {
     return {
-      id: this.id,
       username: this.username
     };
   }

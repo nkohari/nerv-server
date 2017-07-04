@@ -1,0 +1,30 @@
+import * as knex from 'knex';
+import { Statement } from '../framework/Statement';
+import Model from '../framework/Model';
+import { ModelClass } from '../framework/ModelClass';
+
+class GetQuery<T extends Model> implements Statement<T> {
+
+  modelClass: ModelClass<T>;
+  idOrProperties: string | Partial<T>;
+
+  constructor(modelClass: ModelClass<T>, idOrProperties: string | Partial<T>) {
+    this.modelClass = modelClass;
+    this.idOrProperties = idOrProperties;
+  }
+
+  execute(connection: knex): Promise<T> {
+    const query = connection(this.modelClass.table).select('*');
+
+    if (typeof this.idOrProperties === 'string') {
+      query.where({ id: this.idOrProperties });
+    } else {
+      query.where(<any> this.idOrProperties);
+    }
+
+    return query.then(rows => (rows.length === 0) ? null : new this.modelClass(rows[0]));
+  }
+
+}
+
+export default GetQuery;
