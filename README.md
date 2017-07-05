@@ -30,7 +30,7 @@ You'll also need Redis, which is used for pub/sub in the websocket system. Just 
 The following environment variables are required. You can safely copy and paste this into
 `development.json` to get started.
 
-```json
+```js
 {
   "ALLOWED_ORIGINS": "http://localhost:8081",
   "AUTH_SECRET": "that's a spicy meatball", // or whatever you want :)
