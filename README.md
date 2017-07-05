@@ -21,7 +21,7 @@ Mineboss Server uses PostgreSQL as a database.
 2. `brew services start postgresql` (to start pgsql on boot, optional)
 3. `$ createuser mineboss`
 4. `$ createdb mineboss`
-5. `$ echo "grant all privileges on database mineboss to mineboss" | psql`
+5. `$ echo "grant all privileges on database mineboss to mineboss" | psql --db mineboss`
 
 You'll also need Redis, which is used for pub/sub in the websocket system. Just `brew install redis`.
 
