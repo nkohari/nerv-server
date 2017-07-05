@@ -1,5 +1,5 @@
 import Event from '../models/Event';
-import InsertStatement from '../framework/InsertStatement';
+import { InsertStatement } from '../framework';
 
 class CreateEventCommand extends InsertStatement<Event> {
 

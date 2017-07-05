@@ -1,9 +1,11 @@
-import * as nconf from 'nconf';
-import * as hapiAuthJwt from 'hapi-auth-jwt';
-import * as Forge from 'forge-di';
-import * as Logger from 'bunyan';
 import { Server, ServerConnectionOptions, HTTP_METHODS_PARTIAL } from 'hapi';
+import * as Nes from 'nes';
+import * as HapiAuthJwt from 'hapi-auth-jwt';
+import * as Forge from 'forge-di';
+import * as nconf from 'nconf';
+import * as Logger from 'bunyan';
 import Gatekeeper from './services/Gatekeeper';
+import Publisher from './services/Publisher';
 import Handler from './framework/Handler';
 import { HandlerClass } from './framework/HandlerClass';
 import routes from './routes';
@@ -14,11 +16,13 @@ class MinebossServer {
   private log: Logger;
   private server: Server;
   private gatekeeper: Gatekeeper;
+  private publisher: Publisher;
 
-  constructor(forge: Forge, log: Logger, gatekeeper: Gatekeeper) {
+  constructor(forge: Forge, log: Logger, gatekeeper: Gatekeeper, publisher: Publisher) {
     this.forge = forge;
     this.log = log;
     this.gatekeeper = gatekeeper;
+    this.publisher = publisher;
   }
 
   start(): Promise<Error> {
@@ -46,9 +50,7 @@ class MinebossServer {
       this.log.error(err);
     });
 
-    return this.server.register([
-      hapiAuthJwt
-    ])
+    return this.server.register([HapiAuthJwt, Nes])
     .then(() => this.configureAuth())
     .then(() => {
       for (let route in routes) {
@@ -56,8 +58,14 @@ class MinebossServer {
         const handler = this.forge.get<Handler>('handler', route);
         this.addHandler(tokens[0], tokens[1], routes[route], handler);
       }
-    })
-    .then(() => this.server.start());
+      this.publisher.start(this.server);
+      return this.server.start();
+    });
+  }
+
+  stop(): Promise<Error> {
+    this.publisher.stop();
+    return this.server.stop({ timeout: 5000 });
   }
 
   configureAuth() {
@@ -88,7 +96,11 @@ class MinebossServer {
     this.log.info(`Mounted ${name} at ${verb} ${path}`);
   }
 
-  getListeningUrls() {
+  getServer(): Server {
+    return this.server;
+  }
+
+  getListeningUrls(): string[] {
     return this.server.connections.map(conn => `${conn.info.protocol}://${conn.info.host}:${conn.info.port}`);
   }
 

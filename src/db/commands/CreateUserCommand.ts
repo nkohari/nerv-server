@@ -1,5 +1,5 @@
 import User from '../models/User';
-import InsertStatement from '../framework/InsertStatement';
+import { InsertStatement } from '../framework';
 
 class CreateUserCommand extends InsertStatement<User> {
 

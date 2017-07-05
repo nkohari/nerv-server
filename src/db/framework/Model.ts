@@ -3,10 +3,9 @@ abstract class Model {
   id: string;
   created: Date;
 
-  constructor(data: any = {}) {
-    for (let key in data) {
-      this[key] = data[key];
-    }
+  constructor(data: Partial<Model>) {
+    this.id = data.id;
+    this.created = data.created;
   }
 
   abstract serialize(): object;

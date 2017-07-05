@@ -1,4 +1,4 @@
-import Model from '../framework/Model';
+import { Model } from '../framework';
 
 class Event extends Model {
 
@@ -9,6 +9,14 @@ class Event extends Model {
   agentid: string;
   deviceid: string;
   properties: object;
+
+  constructor(data: Partial<Event> = {}) {
+    super(data);
+    this.userid = data.userid;
+    this.agentid = data.agentid;
+    this.deviceid = data.deviceid;
+    this.properties = { ...data.properties };
+  }
 
   serialize() {
     return {

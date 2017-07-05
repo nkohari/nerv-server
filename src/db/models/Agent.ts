@@ -1,4 +1,4 @@
-import Model from '../framework/Model';
+import { Model } from '../framework';
 
 class Agent extends Model {
 
@@ -6,6 +6,12 @@ class Agent extends Model {
 
   userid: string;
   name: string;
+
+  constructor(data: Partial<Agent> = {}) {
+    super(data);
+    this.userid = data.userid;
+    this.name = data.name;
+  }
 
   serialize() {
     return {

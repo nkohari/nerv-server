@@ -2,7 +2,7 @@ import * as Logger from 'bunyan';
 import Forge from 'forge-di';
 import { Database } from './db';
 import { Application, Environment } from './framework';
-import { MinebossServer, Gatekeeper, Keymaster, routes } from './http';
+import { MinebossServer, Gatekeeper, Keymaster, Publisher, routes } from './http';
 
 class ServerEnvironment implements Environment {
 
@@ -10,10 +10,14 @@ class ServerEnvironment implements Environment {
     const forge = new Forge();
 
     forge.bind('app').to.instance(app);
-    forge.bind('log').to.function(() => Logger.createLogger({ name: app.name }));
+    forge.bind('log').to.function(() => Logger.createLogger({
+      name: app.name,
+      level: process.env.NODE_ENV === 'development' ? 'debug' : 'info'
+    }));
 
     forge.bind('server').to.type(MinebossServer);
     forge.bind('database').to.type(Database);
+    forge.bind('publisher').to.type(Publisher);
     forge.bind('gatekeeper').to.type(Gatekeeper);
     forge.bind('keymaster').to.type(Keymaster);
 

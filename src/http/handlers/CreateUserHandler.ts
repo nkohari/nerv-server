@@ -1,7 +1,7 @@
 import { Request, ReplyNoContinue } from 'hapi';
 import * as Boom from 'Boom';
 import Handler from '../framework/Handler';
-import { GetQuery, CreateUserCommand, User } from '../../db';
+import { User, CreateUserCommand } from '../../db';
 
 class CreateUserHandler extends Handler {
 
@@ -10,8 +10,7 @@ class CreateUserHandler extends Handler {
   handle(request: Request, reply: ReplyNoContinue) {
     const { username, password } = request.payload;
 
-    const query = new GetQuery(User, { username });
-    this.database.execute(query).then(existingUser => {
+    this.database.get(User, { username }).then(existingUser => {
       if (existingUser) {
         return reply(Boom.badRequest('A user with that username already exists'));
       }

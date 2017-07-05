@@ -1,8 +1,6 @@
 import * as uuid from 'uuid/v4';
 import * as knex from 'knex';
-import Model from './Model';
-import { ModelClass } from './ModelClass';
-import { Statement } from './Statement';
+import { Model, ModelClass, Statement } from '.';
 
 class InsertStatement<T extends Model> implements Statement<T> {
 

@@ -1,7 +1,5 @@
 import * as knex from 'knex';
-import { Statement } from '../framework/Statement';
-import Model from '../framework/Model';
-import { ModelClass } from '../framework/ModelClass';
+import { Model, ModelClass, Statement } from '../framework';
 
 class GetQuery<T extends Model> implements Statement<T> {
 

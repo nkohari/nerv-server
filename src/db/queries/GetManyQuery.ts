@@ -1,7 +1,5 @@
 import * as knex from 'knex';
-import Model from '../framework/Model';
-import { ModelClass } from '../framework/ModelClass';
-import { Statement } from '../framework/Statement';
+import { Model, ModelClass, Statement } from '../framework';
 
 class GetManyQuery<T extends Model> implements Statement<T[]> {
 

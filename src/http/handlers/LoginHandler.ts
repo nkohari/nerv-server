@@ -1,6 +1,6 @@
 import { Request, ReplyNoContinue } from 'hapi';
 import Handler from '../framework/Handler';
-import { User, GetQuery } from '../../db';
+import { User } from '../../db';
 
 class LoginHandler extends Handler {
 
@@ -9,8 +9,7 @@ class LoginHandler extends Handler {
   handle(request: Request, reply: ReplyNoContinue) {
     const { username, password } = request.payload;
 
-    const query = new GetQuery(User, { username });
-    this.database.execute(query).then(user => {
+    this.database.get(User, { username }).then(user => {
       if (!user) {
         reply(401);
       } else {

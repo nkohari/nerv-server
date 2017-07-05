@@ -1,4 +1,4 @@
-import Model from '../framework/Model';
+import { Model } from '../framework';
 
 class User extends Model {
 
@@ -6,6 +6,12 @@ class User extends Model {
 
   username: string;
   password: string;
+
+  constructor(data: Partial<User> = {}) {
+    super(data);
+    this.username = data.username;
+    this.password = data.password;
+  }
 
   serialize() {
     return {

@@ -1,6 +1,8 @@
 import * as knex from 'knex';
 import * as nconf from 'nconf';
-import { Statement } from './framework/Statement';
+import { Model, ModelClass, Statement } from './framework';
+import GetQuery from './queries/GetQuery';
+import GetManyQuery from './queries/GetManyQuery';
 
 class Database {
 
@@ -26,6 +28,14 @@ class Database {
 
   execute<T>(statement: Statement<T>): Promise<T> {
     return statement.execute(this.connection);
+  }
+
+  get<T extends Model>(modelClass: ModelClass<T>, idOrProperties: string | Partial<T>): Promise<T> {
+    return this.execute(new GetQuery(modelClass, idOrProperties));
+  }
+
+  getMany<T extends Model>(modelClass: ModelClass<T>, idsOrProperties: string[] | Partial<T>): Promise<T[]> {
+    return this.execute(new GetManyQuery(modelClass, idsOrProperties));
   }
 
 }
