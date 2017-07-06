@@ -17,9 +17,8 @@ class LoginHandler extends Handler {
           if (!matches) {
             reply(401);
           } else {
-            reply({
-              user,
-              token: this.keymaster.createToken(user)
+            return this.keymaster.createToken(user).then(token => {
+              reply({ user, token });
             });
           }
         });

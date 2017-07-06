@@ -14,7 +14,11 @@ class Gatekeeper {
   }
 
   authorize(request: Request, token: AuthToken, callback: AuthorizeCallback) {
-    const { userid } = request.params;
+    const { groupid, userid } = request.params;
+
+    if (groupid && token.groups.indexOf(groupid) === -1) {
+      return callback(Boom.forbidden("You don't have access to that resource"), false, null);
+    }
 
     if (userid && token.id !== userid) {
       return callback(Boom.forbidden("You don't have access to that resource"), false, null);

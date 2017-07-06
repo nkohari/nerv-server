@@ -1,34 +1,49 @@
 create type device_kind as enum ('gpu', 'cpu', 'usb');
 
 create table users (
-  id uuid primary key,
-  created timestamp,
-  username text,
-  password text
+  id uuid not null primary key,
+  created timestamp not null,
+  username text not null,
+  password text not null,
+  email text
+);
+
+create table groups (
+  id uuid not null primary key,
+  created timestamp not null,
+  name text not null
+);
+
+create table memberships (
+  id uuid not null primary key,
+  created timestamp not null,
+  userid uuid not null,
+  groupid uuid not null
 );
 
 create table agents (
   id uuid primary key,
   created timestamp,
   userid uuid,
+  groupid uuid,
   name text
 );
 
 create table devices (
-  id uuid primary key,
-  created timestamp,
-  userid uuid,
-  agentid uuid,
-  kind device_kind,
-  vendor text,
-  model text
+  id uuid not null primary key,
+  created timestamp not null,
+  groupid uuid not null,
+  agentid uuid not null,
+  kind device_kind not null,
+  vendor text not null,
+  model text not null
 );
 
 create table events (
-  id uuid primary key,
-  created timestamp,
-  userid uuid,
-  agentid uuid,
-  deviceid uuid,
+  id uuid not null primary key,
+  created timestamp not null,
+  groupid uuid not null,
+  agentid uuid not null,
+  deviceid uuid not null,
   properties jsonb
 );

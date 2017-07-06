@@ -98,7 +98,7 @@
     "no-relative-imports": false,
     "no-require-imports": true,
     "no-shadowed-variable": true,
-    "no-suspicious-comment": true,
+    "no-suspicious-comment": false,
     "no-typeof-undefined": true,
     "no-unnecessary-field-initialization": true,
     "no-unnecessary-local-variable": true,
@@ -173,7 +173,7 @@
     "no-reference": true,        // in general you should use a module system and not /// reference imports
     "no-unexternalized-strings": false, // the VS Code team has a specific localization process that this rule enforces
     "object-literal-shorthand": false,  // object-literal-shorthand offers an abbreviation not an abstraction
-    "prefer-type-cast": true,   // pick either type-cast format and use it consistently
+    "prefer-type-cast": false,   // pick either type-cast format and use it consistently
     "space-before-function-paren": false,   // turn this on if this is really your coding standard
 
     /**

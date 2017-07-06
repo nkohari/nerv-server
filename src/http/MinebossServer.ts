@@ -8,7 +8,7 @@ import Gatekeeper from './services/Gatekeeper';
 import Publisher from './services/Publisher';
 import Handler from './framework/Handler';
 import { HandlerClass } from './framework/HandlerClass';
-import routes from './routes';
+import { routes } from './handlers';
 
 class MinebossServer {
 

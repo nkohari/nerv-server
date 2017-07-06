@@ -1,28 +1,25 @@
 import { Model } from '../framework';
 
-class Agent extends Model {
+class Membership extends Model {
 
-  static table = 'agents';
+  static table = 'memberships';
 
   userid: string;
   groupid: string;
-  name: string;
 
-  constructor(data: Partial<Agent> = {}) {
+  constructor(data: Partial<Membership> = {}) {
     super(data);
     this.userid = data.userid;
     this.groupid = data.groupid;
-    this.name = data.name;
   }
 
   serialize() {
     return {
       userid: this.userid,
-      groupid: this.groupid,
-      name: this.name
+      groupid: this.groupid
     };
   }
 
 }
 
-export default Agent;
+export default Membership;

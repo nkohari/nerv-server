@@ -1,14 +1,16 @@
 import * as knex from 'knex';
 import * as nconf from 'nconf';
-import { Model, ModelClass, Statement } from './framework';
-import GetQuery from './queries/GetQuery';
-import GetManyQuery from './queries/GetManyQuery';
+import { Executor, Statement } from './framework';
+import Transaction from './Transaction';
 
-class Database {
+type TransactionScope = (transaction: Transaction) => Promise<any>;
+
+class Database extends Executor {
 
   private connection: knex;
 
   constructor() {
+    super();
     this.connection = knex({
       client: 'postgresql',
       connection: {
@@ -30,12 +32,10 @@ class Database {
     return statement.execute(this.connection);
   }
 
-  get<T extends Model>(modelClass: ModelClass<T>, idOrProperties: string | Partial<T>): Promise<T> {
-    return this.execute(new GetQuery(modelClass, idOrProperties));
-  }
-
-  getMany<T extends Model>(modelClass: ModelClass<T>, idsOrProperties: string[] | Partial<T>): Promise<T[]> {
-    return this.execute(new GetManyQuery(modelClass, idsOrProperties));
+  transaction(scope: TransactionScope): Promise<any> {
+    return this.connection.transaction(tx => {
+      return scope(new Transaction(tx));
+    });
   }
 
 }
