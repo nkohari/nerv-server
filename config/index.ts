@@ -7,5 +7,5 @@ nconf
 .env()
 .file({ file: path.resolve(__dirname, `${env}.json`) })
 .defaults({
-  PORT: 3000
+  PORT: 8082
 });
