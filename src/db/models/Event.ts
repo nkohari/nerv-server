@@ -5,22 +5,26 @@ class Event extends Model {
   static table = 'events';
 
   id: string;
-  userid: string;
+  groupid: string;
   agentid: string;
   deviceid: string;
   properties: object;
 
   constructor(data: Partial<Event> = {}) {
     super(data);
-    this.userid = data.userid;
+    this.groupid = data.groupid;
     this.agentid = data.agentid;
     this.deviceid = data.deviceid;
     this.properties = { ...data.properties };
   }
 
+  getSecurityContext() {
+    return { groupid: this.groupid };
+  }
+
   serialize() {
     return {
-      userid: this.userid,
+      groupid: this.groupid,
       agentid: this.agentid,
       deviceid: this.deviceid,
       ...this.properties

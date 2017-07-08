@@ -1,11 +1,11 @@
 import { Request, ReplyNoContinue } from 'hapi';
 import { Database } from '../../db';
-import Keymaster from '../services/Keymaster';
+import { Keymaster } from '../../common';
 
 abstract class Handler {
 
-  protected database: Database;
-  protected keymaster: Keymaster;
+  database: Database;
+  keymaster: Keymaster;
 
   constructor(database: Database, keymaster: Keymaster) {
     this.database = database;

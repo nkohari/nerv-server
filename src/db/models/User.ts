@@ -15,6 +15,10 @@ class User extends Model {
     this.password = data.password;
   }
 
+  getSecurityContext() {
+    return { userid: this.id };
+  }
+
   serialize() {
     return {
       username: this.username,

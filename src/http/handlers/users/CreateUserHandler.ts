@@ -1,6 +1,6 @@
 import { Request, ReplyNoContinue } from 'hapi';
 import * as Boom from 'Boom';
-import Handler from '../../framework/Handler';
+import { Handler } from '../../framework';
 import { Agent, User, Group, Membership, Transaction } from '../../../db';
 
 class CreateUserHandler extends Handler {
@@ -17,8 +17,9 @@ class CreateUserHandler extends Handler {
           return this.createDefaultGroup(tx, user).then(group => {
             return this.createMembership(tx, user, group).then(membership => {
               return this.associateAgent(tx, group, agentid).then(agent => {
-                return this.keymaster.createToken(user).then(token => {
-                  reply({ user, token });
+                reply({
+                  user,
+                  token: this.keymaster.createToken(user, [membership])
                 });
               });
             });

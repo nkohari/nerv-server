@@ -1,5 +1,6 @@
 export { default as Database } from './Database';
 export { default as Transaction } from './Transaction';
+export { default as Model } from './framework/Model';
 
 export { default as Agent } from './models/Agent';
 export { default as Device } from './models/Device';

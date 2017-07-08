@@ -4,25 +4,23 @@ import * as HapiAuthJwt from 'hapi-auth-jwt';
 import * as Forge from 'forge-di';
 import * as nconf from 'nconf';
 import * as Logger from 'bunyan';
-import Gatekeeper from './services/Gatekeeper';
-import Publisher from './services/Publisher';
-import Handler from './framework/Handler';
-import { HandlerClass } from './framework/HandlerClass';
+import { Gatekeeper, MessageBus } from '../common';
+import { Handler, HandlerClass } from './framework';
 import { routes } from './handlers';
 
 class MinebossServer {
 
-  private forge: Forge;
-  private log: Logger;
-  private server: Server;
-  private gatekeeper: Gatekeeper;
-  private publisher: Publisher;
+  forge: Forge;
+  log: Logger;
+  server: Server;
+  gatekeeper: Gatekeeper;
+  messageBus: MessageBus;
 
-  constructor(forge: Forge, log: Logger, gatekeeper: Gatekeeper, publisher: Publisher) {
+  constructor(forge: Forge, log: Logger, gatekeeper: Gatekeeper, messageBus: MessageBus) {
     this.forge = forge;
     this.log = log;
     this.gatekeeper = gatekeeper;
-    this.publisher = publisher;
+    this.messageBus = messageBus;
   }
 
   start(): Promise<Error> {
@@ -58,20 +56,20 @@ class MinebossServer {
         const handler = this.forge.get<Handler>('handler', route);
         this.addHandler(tokens[0], tokens[1], routes[route], handler);
       }
-      this.publisher.start(this.server);
+      this.messageBus.start(this.server);
       return this.server.start();
     });
   }
 
   stop(): Promise<Error> {
-    this.publisher.stop();
+    this.messageBus.stop();
     return this.server.stop({ timeout: 5000 });
   }
 
   configureAuth() {
     this.server.auth.strategy('jwt', 'jwt', 'required', {
       key: nconf.get('AUTH_SECRET'),
-      validateFunc: (request, token, callback) => this.gatekeeper.authorize(request, token, callback),
+      validateFunc: (request, tokenData, callback) => this.gatekeeper.authorize(request, tokenData, callback),
       verifyOptions: {
         algorithms: ['HS256']
       }
@@ -84,7 +82,8 @@ class MinebossServer {
     const config = {
       json: { space: 2 },
       auth: (handlerClass.auth != null) ? handlerClass.auth : { mode: 'required' },
-      pre: (handlerClass.pre != null) ? handlerClass.pre : null
+      pre: (handlerClass.pre != null) ? handlerClass.pre : null,
+      validate: (handlerClass.validate != null) ? handlerClass.validate : null
     };
 
     this.server.route({

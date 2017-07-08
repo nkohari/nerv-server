@@ -15,6 +15,10 @@ class Agent extends Model {
     this.name = data.name;
   }
 
+  getSecurityContext() {
+    return { groupid: this.groupid };
+  }
+
   serialize() {
     return {
       userid: this.userid,

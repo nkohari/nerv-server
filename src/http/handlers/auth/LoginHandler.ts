@@ -1,6 +1,6 @@
 import { Request, ReplyNoContinue } from 'hapi';
-import Handler from '../framework/Handler';
-import { User } from '../../db';
+import { Handler } from '../../framework';
+import { User, Membership } from '../../../db';
 
 class LoginHandler extends Handler {
 
@@ -17,8 +17,11 @@ class LoginHandler extends Handler {
           if (!matches) {
             reply(401);
           } else {
-            return this.keymaster.createToken(user).then(token => {
-              reply({ user, token });
+            this.database.getMany(Membership, { userid: user.id }).then(memberships => {
+              reply({
+                user,
+                token: this.keymaster.createToken(user, memberships)
+              });
             });
           }
         });

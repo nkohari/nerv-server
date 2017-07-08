@@ -13,6 +13,10 @@ class Membership extends Model {
     this.groupid = data.groupid;
   }
 
+  getSecurityContext() {
+    return { groupid: this.groupid };
+  }
+
   serialize() {
     return {
       userid: this.userid,

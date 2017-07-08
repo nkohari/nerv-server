@@ -1,4 +1,5 @@
 import * as knex from 'knex';
+import { MessageBus } from '../../common';
 import { Model, ModelClass, Statement } from '../framework';
 
 class UpdateManyStatement<T extends Model> implements Statement<T[]> {
@@ -13,11 +14,20 @@ class UpdateManyStatement<T extends Model> implements Statement<T[]> {
     this.patch = patch;
   }
 
-  execute(connection: knex): Promise<T[]> {
+  execute(connection: knex, messageBus: MessageBus): Promise<T[]> {
     return connection(this.modelClass.table)
-    .update(this.patch, '*')
-    .where(<any> this.match)
-    .then(rows => rows.map(row => new this.modelClass(row)));
+    .update({
+      version: connection.raw('version + 1'),
+      ...(this.patch as object)
+    })
+    .returning('*')
+    .where(this.match as object)
+    .then(rows => {
+      if (rows.length === 0) return [];
+      const models = rows.map(row => new this.modelClass(row));
+      messageBus.announce('update', models);
+      return models;
+    });
   }
 
 }

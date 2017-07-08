@@ -11,6 +11,10 @@ class Group extends Model {
     this.name = data.name;
   }
 
+  getSecurityContext() {
+    return { groupid: this.id };
+  }
+
   serialize() {
     return {
       name: this.name

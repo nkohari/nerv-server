@@ -6,7 +6,7 @@ class Device extends Model {
 
   static table = 'devices';
 
-  userid: string;
+  groupid: string;
   agentid: string;
   kind: DeviceKind;
   vendor: string;
@@ -14,16 +14,20 @@ class Device extends Model {
 
   constructor(data: Partial<Device> = {}) {
     super(data);
-    this.userid = data.userid;
+    this.groupid = data.groupid;
     this.agentid = data.agentid;
     this.kind = data.kind;
     this.vendor = data.vendor;
     this.model = data.model;
   }
 
+  getSecurityContext() {
+    return { groupid: this.groupid };
+  }
+
   serialize() {
     return {
-      userid: this.userid,
+      groupid: this.groupid,
       agentid: this.agentid,
       kind: this.kind,
       vendor: this.vendor,

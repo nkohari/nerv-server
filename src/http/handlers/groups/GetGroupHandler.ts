@@ -1,5 +1,5 @@
 import { Request, ReplyNoContinue } from 'hapi';
-import Handler from '../../framework/Handler';
+import { Handler } from '../../framework';
 import { Group } from '../../../db';
 
 class GetGroupHandler extends Handler {
