@@ -45,6 +45,7 @@
     "@types/nes": "^6.2.8",
     "@types/node": "^6.0.79",
     "nodemon": "^1.11.0",
+    "tsconfig-paths": "^2.2.0",
     "tslint": "^5.4.3",
     "tslint-microsoft-contrib": "^5.0.0",
     "tsutils": "1.6.0"

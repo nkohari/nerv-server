@@ -10,6 +10,7 @@ class Transaction extends Executor {
   constructor(transaction: knex.Transaction, messageBus: MessageBus) {
     super();
     this.transaction = transaction;
+    this.messageBus = messageBus;
   }
 
   execute<T>(statement: Statement<T>): Promise<T> {

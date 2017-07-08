@@ -1,41 +1,55 @@
 import { RouteMap } from '../framework/RouteMap';
 
+import { default as CreateAgentHandler } from './agents/CreateAgentHandler';
+import { default as CreateGroupHandler } from './groups/CreateGroupHandler';
 import { default as CreateUserHandler } from './users/CreateUserHandler';
 import { default as GetAgentHandler } from './agents/GetAgentHandler';
 import { default as GetGroupHandler } from './groups/GetGroupHandler';
 import { default as GetMembershipHandler } from './memberships/GetMembershipHandler';
 import { default as GetTokenHandler } from './auth/GetTokenHandler';
 import { default as GetUserHandler } from './users/GetUserHandler';
-import { default as ListAgentsHandler } from './agents/ListAgentsHandler';
-import { default as ListGroupsHandler } from './groups/ListGroupsHandler';
-import { default as ListMembershipsHandler } from './memberships/ListMembershipsHandler';
+import { default as ListAgentsByGroupHandler } from './agents/ListAgentsByGroupHandler';
+import { default as ListAgentsByUserHandler } from './agents/ListAgentsByUserHandler';
+import { default as ListGroupsByUserHandler } from './groups/ListGroupsByUserHandler';
+import { default as ListMembershipsByGroupHandler } from './memberships/ListMembershipsByGroupHandler';
 import { default as LoginHandler } from './auth/LoginHandler';
 import { default as UpdateGroupHandler } from './groups/UpdateGroupHandler';
 
 export {
+  CreateAgentHandler,
+  CreateGroupHandler,
   CreateUserHandler,
   GetAgentHandler,
   GetGroupHandler,
   GetMembershipHandler,
   GetTokenHandler,
   GetUserHandler,
-  ListAgentsHandler,
-  ListGroupsHandler,
-  ListMembershipsHandler,
+  ListAgentsByGroupHandler,
+  ListAgentsByUserHandler,
+  ListGroupsByUserHandler,
+  ListMembershipsByGroupHandler,
   LoginHandler,
   UpdateGroupHandler
 };
 
 export const routes: RouteMap = {
-  'get /groups': ListGroupsHandler,
+  // Groups
+  'post /groups': CreateGroupHandler,
+  'get /groups': ListGroupsByUserHandler,
   'get /groups/{groupid}': GetGroupHandler,
   'put /groups/{groupid}': UpdateGroupHandler,
-  'get /groups/{groupid}/agents': ListAgentsHandler,
+  // Agents
+  'get /agents': ListAgentsByUserHandler,
+  'post /groups/{groupid}/agents': CreateAgentHandler,
+  'get /groups/{groupid}/agents': ListAgentsByGroupHandler,
   'get /groups/{groupid}/agents/{agentid}': GetAgentHandler,
-  'get /groups/{groupid}/memberships': ListMembershipsHandler,
+  // Memberships
+  'get /groups/{groupid}/memberships': ListMembershipsByGroupHandler,
   'get /groups/{groupid}/memberships/{membershipid}': GetMembershipHandler,
+  // Users
   'post /users': CreateUserHandler,
   'get /users/{userid}': GetUserHandler,
+  // Auth
   'post /auth': LoginHandler,
   'get /auth': GetTokenHandler
 };

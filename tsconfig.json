@@ -3,6 +3,7 @@
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "alwaysStrict": true,
+    "baseUrl": ".",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
@@ -14,6 +15,9 @@
     "noImplicitThis": true,
     "noUnusedLocals": true,
     "outDir": ".build",
+    "paths": {
+      "*": ["*", "src/*"]
+    },
     "target": "es6"
   },
   "include": [

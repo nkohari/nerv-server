@@ -1,9 +1,8 @@
 import * as Logger from 'bunyan';
 import Forge from 'forge-di';
 import { Database } from './db';
-import { Application, Environment } from './framework';
 import { MinebossServer, routes } from './http';
-import { Gatekeeper, Keymaster, MessageBus } from './common';
+import { Application, Environment, Gatekeeper, Keymaster, MessageBus } from './common';
 
 class ServerEnvironment implements Environment {
 

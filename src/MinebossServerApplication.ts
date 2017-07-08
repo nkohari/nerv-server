@@ -1,4 +1,4 @@
-import { Application, Environment } from './framework';
+import { Application, Environment } from './common';
 import MinebossServer from './http/MinebossServer';
 import MinebossServerEnvironment from './MinebossServerEnvironment';
 

@@ -17,6 +17,10 @@ abstract class Executor {
     return this.execute(new InsertStatement(modelClass, properties));
   }
 
+  insertMany<T extends Model>(modelClass: ModelClass<T>, properties: Partial<T>[]): Promise<T[]> {
+    return Promise.all(properties.map(p => this.insert(modelClass, p)));
+  }
+
   update<T extends Model>(modelClass: ModelClass<T>, match: Partial<T>, patch: Partial<T>): Promise<T> {
     return this.execute(new UpdateStatement(modelClass, match, patch));
   }

@@ -2,7 +2,7 @@ import { Request, ReplyNoContinue } from 'hapi';
 import { Handler } from '../../framework';
 import { Group, Membership } from '../../../db';
 
-class ListGroupsHandler extends Handler {
+class ListGroupsByUserHandler extends Handler {
 
   handle(request: Request, reply: ReplyNoContinue) {
     const { userid } = request.auth.credentials;
@@ -12,9 +12,8 @@ class ListGroupsHandler extends Handler {
         reply({ groups });
       });
     });
-
   }
 
 }
 
-export default ListGroupsHandler;
+export default ListGroupsByUserHandler;

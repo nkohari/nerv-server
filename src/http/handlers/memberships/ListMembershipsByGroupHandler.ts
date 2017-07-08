@@ -2,7 +2,7 @@ import { Request, ReplyNoContinue } from 'hapi';
 import { Handler } from '../../framework';
 import { Membership } from '../../../db';
 
-class ListMembershipsHandler extends Handler {
+class ListMembershipsByGroupHandler extends Handler {
 
   handle(request: Request, reply: ReplyNoContinue) {
     const { groupid } = request.params;
@@ -13,4 +13,4 @@ class ListMembershipsHandler extends Handler {
 
 }
 
-export default ListMembershipsHandler;
+export default ListMembershipsByGroupHandler;

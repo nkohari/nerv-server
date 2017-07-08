@@ -1,2 +1,6 @@
 import './config';
-import './src';
+import MinebossServerApplication from './src/MinebossServerApplication';
+
+const app = new MinebossServerApplication();
+
+app.start();
