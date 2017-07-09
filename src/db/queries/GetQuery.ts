@@ -1,7 +1,7 @@
 import * as knex from 'knex';
-import { Model, ModelClass, Statement } from '../framework';
+import { Model, ModelClass, Query } from '../framework';
 
-class GetQuery<T extends Model> implements Statement<T> {
+class GetQuery<T extends Model> implements Query<T> {
 
   modelClass: ModelClass<T>;
   idOrProperties: string | Partial<T>;

@@ -1,10 +1,18 @@
 import { Request, ReplyNoContinue } from 'hapi';
+import * as Joi from 'joi';
 import { Handler } from '../../framework';
 import { User, Membership } from '../../../db';
 
 class LoginHandler extends Handler {
 
   static auth = false;
+
+  static validate = {
+    payload: {
+      username: Joi.string().required(),
+      password: Joi.string().required()
+    }
+  };
 
   handle(request: Request, reply: ReplyNoContinue) {
     const { username, password } = request.payload;

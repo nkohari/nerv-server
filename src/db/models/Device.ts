@@ -1,6 +1,6 @@
 import { Model } from '../framework';
 
-export type DeviceKind = 'gpu' | 'cpu' | 'usb';
+export type DeviceType = 'gpu' | 'cpu' | 'usb';
 
 class Device extends Model {
 
@@ -8,7 +8,7 @@ class Device extends Model {
 
   groupid: string;
   agentid: string;
-  kind: DeviceKind;
+  type: DeviceType;
   vendor: string;
   model: string;
 
@@ -16,7 +16,7 @@ class Device extends Model {
     super(data);
     this.groupid = data.groupid;
     this.agentid = data.agentid;
-    this.kind = data.kind;
+    this.type = data.type;
     this.vendor = data.vendor;
     this.model = data.model;
   }
@@ -29,7 +29,7 @@ class Device extends Model {
     return {
       groupid: this.groupid,
       agentid: this.agentid,
-      kind: this.kind,
+      type: this.type,
       vendor: this.vendor,
       model: this.model
     };

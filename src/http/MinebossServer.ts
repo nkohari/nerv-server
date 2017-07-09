@@ -5,7 +5,7 @@ import * as Forge from 'forge-di';
 import * as nconf from 'nconf';
 import * as Logger from 'bunyan';
 import { Gatekeeper, MessageBus } from '../common';
-import { Handler, HandlerClass } from './framework';
+import { Handler, HandlerClass, Precondition, PreconditionClass } from './framework';
 import { routes } from './handlers';
 
 class MinebossServer {
@@ -79,10 +79,20 @@ class MinebossServer {
   addHandler(verb: string, path: string, handlerClass: HandlerClass, handler: Handler) {
     const name = (<any> handlerClass).name;
 
+    const resolvePreconditions = (preconditions: PreconditionClass[]) => (
+      preconditions.map(type => {
+        const precond = this.forge.get<Precondition>('precondition', type.name);
+        return {
+          assign: type.assign,
+          method: (request, reply) => precond.execute(request, reply)
+        };
+      })
+    );
+
     const config = {
       json: { space: 2 },
       auth: (handlerClass.auth != null) ? handlerClass.auth : { mode: 'required' },
-      pre: (handlerClass.pre != null) ? handlerClass.pre : null,
+      pre: (handlerClass.pre != null) ? resolvePreconditions(handlerClass.pre) : null,
       validate: (handlerClass.validate != null) ? handlerClass.validate : null
     };
 
@@ -92,6 +102,7 @@ class MinebossServer {
       handler: (request, reply) => handler.handle(request, reply),
       config
     });
+
     this.log.info(`Mounted ${name} at ${verb} ${path}`);
   }
 

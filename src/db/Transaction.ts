@@ -1,6 +1,6 @@
 import * as knex from 'knex';
 import { MessageBus } from '../common';
-import { Executor, Statement } from './framework';
+import { Executor, Query, Statement } from './framework';
 
 class Transaction extends Executor {
 
@@ -11,6 +11,10 @@ class Transaction extends Executor {
     super();
     this.transaction = transaction;
     this.messageBus = messageBus;
+  }
+
+  query<T>(query: Query<T>): Promise<T> {
+    return query.execute(this.transaction);
   }
 
   execute<T>(statement: Statement<T>): Promise<T> {

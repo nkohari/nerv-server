@@ -8,7 +8,7 @@ class ListGroupsByUserHandler extends Handler {
     const { userid } = request.auth.credentials;
     this.database.getMany(Membership, { userid }).then(memberships => {
       const groupids = memberships.map(m => m.groupid);
-      return this.database.getMany(Group, groupids).then(groups => {
+      return this.database.getMany(Group, { id: groupids }).then(groups => {
         reply({ groups });
       });
     });

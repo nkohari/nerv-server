@@ -1,9 +1,8 @@
 import { Request, ReplyNoContinue } from 'hapi';
-import * as Boom from 'boom';
 import * as Joi from 'joi';
 import { Handler } from '../../framework';
 import { Credentials } from '../../../common';
-import { Group, Membership } from '../../../db';
+import { CreateGroupCommand } from '../../../db';
 
 class CreateGroupHandler extends Handler {
 
@@ -23,23 +22,10 @@ class CreateGroupHandler extends Handler {
       members.push(credentials.userid);
     }
 
-    this.database.transaction(tx => {
-      return tx.insert(Group, { name }).then(group => {
-        if (!group) {
-          reply(Boom.internal('Error creating group'));
-        } else {
-          const membershipProps = members.map(userid => ({
-            groupid: group.id,
-            userid
-          }));
-          return tx.insertMany(Membership, membershipProps).then(memberships => {
-            if (!memberships || memberships.length === 0) {
-              reply(Boom.internal('Error creating group memberships'));
-            }
-            reply({ group, memberships }).code(201);
-          });
-        }
-      });
+    const command = new CreateGroupCommand({ name }, members);
+    this.database.run(command).then(result => {
+      const { group, memberships } = result;
+      reply({ group, memberships }).code(201);
     });
   }
 

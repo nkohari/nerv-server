@@ -2,6 +2,7 @@ import * as Logger from 'bunyan';
 import Forge from 'forge-di';
 import { Database } from './db';
 import { MinebossServer, routes } from './http';
+import * as preconditions from './http/preconditions';
 import { Application, Environment, Gatekeeper, Keymaster, MessageBus } from './common';
 
 class ServerEnvironment implements Environment {
@@ -23,6 +24,11 @@ class ServerEnvironment implements Environment {
 
     Object.keys(routes).forEach(route => {
       forge.bind('handler').to.type(routes[route]).when(route);
+    });
+
+    Object.keys(preconditions).forEach(name => {
+      const type = preconditions[name];
+      forge.bind('precondition').to.type(type).when(type.name);
     });
 
     return forge;

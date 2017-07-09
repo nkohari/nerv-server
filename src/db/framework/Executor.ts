@@ -1,16 +1,18 @@
-import { Model, ModelClass, Statement } from '.';
-import { GetQuery, GetManyQuery, InsertStatement, UpdateStatement, UpdateManyStatement } from '../statements';
+import { Model, ModelClass, Query, Statement } from '.';
+import { GetManyProperties } from './GetManyProperties';
+import { GetQuery, GetManyQuery, InsertStatement, UpdateStatement, UpdateManyStatement } from '..';
 
 abstract class Executor {
 
+  abstract query<T>(query: Query<T>): Promise<T>;
   abstract execute<T>(statement: Statement<T>): Promise<T>;
 
   get<T extends Model>(modelClass: ModelClass<T>, idOrProperties: string | Partial<T>): Promise<T> {
-    return this.execute(new GetQuery(modelClass, idOrProperties));
+    return this.query(new GetQuery(modelClass, idOrProperties));
   }
 
-  getMany<T extends Model>(modelClass: ModelClass<T>, idsOrProperties: string[] | Partial<T>): Promise<T[]> {
-    return this.execute(new GetManyQuery(modelClass, idsOrProperties));
+  getMany<T extends Model>(modelClass: ModelClass<T>, properties: GetManyProperties<T>): Promise<T[]> {
+    return this.query(new GetManyQuery(modelClass, properties));
   }
 
   insert<T extends Model>(modelClass: ModelClass<T>, properties: Partial<T>): Promise<T> {

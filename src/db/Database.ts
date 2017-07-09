@@ -1,10 +1,8 @@
 import * as knex from 'knex';
 import * as nconf from 'nconf';
 import { MessageBus } from '../common';
-import { Executor, Statement } from './framework';
+import { Executor, Query, Statement, Command } from './framework';
 import Transaction from './Transaction';
-
-type TransactionScope = (transaction: Transaction) => Promise<any>;
 
 class Database extends Executor {
 
@@ -31,13 +29,17 @@ class Database extends Executor {
     });
   }
 
+  query<T>(query: Query<T>): Promise<T> {
+    return query.execute(this.connection);
+  }
+
   execute<T>(statement: Statement<T>): Promise<T> {
     return statement.execute(this.connection, this.messageBus);
   }
 
-  transaction(scope: TransactionScope): Promise<any> {
+  run<T>(command: Command<T>): Promise<T> {
     return this.connection.transaction(tx => {
-      return scope(new Transaction(tx, this.messageBus));
+      return command.run(new Transaction(tx, this.messageBus));
     });
   }
 

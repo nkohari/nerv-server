@@ -8,7 +8,7 @@ class ListAgentsByUserHandler extends Handler {
     const { userid } = request.auth.credentials;
     this.database.getMany(Membership, { userid }).then(memberships => {
       const groupids = memberships.map(m => m.groupid);
-      this.database.getMany(Agent, groupids).then(agents => {
+      this.database.getMany(Agent, { groupid: groupids }).then(agents => {
         reply({ agents });
       });
     });
