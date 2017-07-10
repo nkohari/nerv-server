@@ -51,12 +51,12 @@ create table devices (
   model text not null
 );
 
-create table events (
+create table metrics (
   id uuid not null primary key,
   created timestamp not null,
   version int not null,
   groupid uuid not null,
   agentid uuid not null,
   deviceid uuid not null,
-  properties jsonb
+  data jsonb
 );

@@ -4,7 +4,6 @@ export { default as Model } from './framework/Model';
 
 export { default as Agent } from './models/Agent';
 export { default as Device } from './models/Device';
-export { default as Event } from './models/Event';
 export { default as Group } from './models/Group';
 export { default as Membership } from './models/Membership';
 export { default as User } from './models/User';

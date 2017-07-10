@@ -13,6 +13,7 @@ import { default as GetUserHandler } from './users/GetUserHandler';
 import { default as ListAgentsByGroupHandler } from './agents/ListAgentsByGroupHandler';
 import { default as ListAgentsByUserHandler } from './agents/ListAgentsByUserHandler';
 import { default as ListDevicesByAgentHandler } from './devices/ListDevicesByAgentHandler';
+import { default as ListDevicesByGroupHandler } from './devices/ListDevicesByGroupHandler';
 import { default as ListGroupsByUserHandler } from './groups/ListGroupsByUserHandler';
 import { default as ListMembershipsByGroupHandler } from './memberships/ListMembershipsByGroupHandler';
 import { default as LoginHandler } from './auth/LoginHandler';
@@ -32,6 +33,7 @@ export const routes: RouteMap = {
   'get /groups/{groupid}/agents/{agentid}': GetAgentHandler,
   'put /groups/{groupid}/agents/{agentid}': UpdateAgentHandler,
   // Devices
+  'get /groups/{groupid}/devices': ListDevicesByGroupHandler,
   'post /groups/{groupid}/agents/{agentid}/devices': CreateDeviceHandler,
   'get /groups/{groupid}/agents/{agentid}/devices': ListDevicesByAgentHandler,
   'get /groups/{groupid}/agents/{agentid}/devices/{deviceid}': GetDeviceHandler,
