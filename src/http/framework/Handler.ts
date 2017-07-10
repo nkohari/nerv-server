@@ -1,6 +1,6 @@
 import { Request, ReplyNoContinue } from 'hapi';
-import { Database } from '../../db';
-import { Keymaster } from '../../common';
+import { Keymaster } from 'src/common';
+import { Database } from 'src/db';
 
 abstract class Handler {
 

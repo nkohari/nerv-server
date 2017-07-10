@@ -1,5 +1,5 @@
-import { Command } from '../framework';
-import { Device, Transaction } from '..';
+import { Device, Transaction } from 'src/db';
+import { Command } from 'src/db/framework';
 
 interface DeviceDefinition extends Partial<Device> {
   groupid: string;

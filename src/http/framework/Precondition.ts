@@ -1,5 +1,5 @@
 import { Request, ReplyWithContinue } from 'hapi';
-import { Database } from '../../db';
+import { Database } from 'src/db';
 
 abstract class Precondition {
 

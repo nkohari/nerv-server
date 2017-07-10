@@ -1,4 +1,4 @@
-import { Model } from '../framework';
+import { Model } from 'src/db/framework';
 
 class Membership extends Model {
 

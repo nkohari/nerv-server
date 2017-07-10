@@ -1,6 +1,6 @@
 import { Request, ReplyNoContinue } from 'hapi';
-import { Handler } from '../../framework';
-import { Agent, Membership } from '../../../db';
+import { Handler } from 'src/http/framework';
+import { Agent, Membership } from 'src/db';
 
 class ListAgentsByUserHandler extends Handler {
 

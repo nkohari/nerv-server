@@ -1,8 +1,8 @@
 import { Request, ReplyNoContinue } from 'hapi';
 import * as Joi from 'joi';
-import { Handler } from '../../framework';
-import { Credentials } from '../../../common';
-import { CreateGroupCommand } from '../../../db';
+import { Handler } from 'src/http/framework';
+import { Credentials } from 'src/common';
+import { CreateGroupCommand } from 'src/db';
 
 class CreateGroupHandler extends Handler {
 

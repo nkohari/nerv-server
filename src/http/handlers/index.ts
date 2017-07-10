@@ -1,4 +1,4 @@
-import { RouteMap } from '../framework/RouteMap';
+import { RouteMap } from 'src/http/framework/RouteMap';
 
 import { default as CreateAgentHandler } from './agents/CreateAgentHandler';
 import { default as CreateDeviceHandler } from './devices/CreateDeviceHandler';

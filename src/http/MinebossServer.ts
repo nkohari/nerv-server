@@ -4,7 +4,7 @@ import * as HapiAuthJwt from 'hapi-auth-jwt';
 import * as Forge from 'forge-di';
 import * as nconf from 'nconf';
 import * as Logger from 'bunyan';
-import { Gatekeeper, MessageBus } from '../common';
+import { Gatekeeper, MessageBus } from 'src/common';
 import { Handler, HandlerClass, Precondition, PreconditionClass } from './framework';
 import { routes } from './handlers';
 

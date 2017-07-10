@@ -1,6 +1,6 @@
 import { Request, ReplyNoContinue } from 'hapi';
-import { Handler } from '../../framework';
-import { Device } from '../../../db';
+import { Handler } from 'src/http/framework';
+import { Device } from 'src/db';
 
 class ListDevicesByAgentHandler extends Handler {
 

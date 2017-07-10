@@ -1,5 +1,5 @@
-import { Command } from '../framework';
-import { Group, Membership, Transaction } from '..';
+import { Group, Membership, Transaction } from 'src/db';
+import { Command } from 'src/db/framework';
 
 interface CreateGroupCommandResult {
   group: Group;

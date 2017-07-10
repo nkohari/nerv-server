@@ -1,5 +1,5 @@
 import * as knex from 'knex';
-import { GetManyProperties, Model, ModelClass, Query } from '../framework';
+import { GetManyProperties, Model, ModelClass, Query } from 'src/db/framework';
 
 class GetManyQuery<T extends Model> implements Query<T[]> {
 

@@ -1,7 +1,7 @@
 import { Request, ReplyNoContinue } from 'hapi';
 import * as Boom from 'boom';
-import { Agent } from '../../db';
-import { Precondition } from '../framework';
+import { Agent } from 'src/db';
+import { Precondition } from 'src/http/framework';
 
 class PreloadAgent extends Precondition {
 

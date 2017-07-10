@@ -1,6 +1,6 @@
 import * as knex from 'knex';
-import { MessageBus } from '../common';
-import { Executor, Query, Statement } from './framework';
+import { MessageBus } from 'src/common';
+import { Executor, Query, Statement } from 'src/db/framework';
 
 class Transaction extends Executor {
 

@@ -1,4 +1,4 @@
-import { SecurityContext } from '../../common';
+import { SecurityContext } from 'src/common';
 
 abstract class Model {
 

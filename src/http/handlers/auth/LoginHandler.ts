@@ -1,7 +1,7 @@
 import { Request, ReplyNoContinue } from 'hapi';
 import * as Joi from 'joi';
-import { Handler } from '../../framework';
-import { User, Membership } from '../../../db';
+import { Handler } from 'src/http/framework';
+import { User, Membership } from 'src/db';
 
 class LoginHandler extends Handler {
 

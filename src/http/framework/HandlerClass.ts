@@ -1,4 +1,4 @@
-import Handler from './Handler';
+import { Handler } from 'src/http/framework';
 
 export interface HandlerClass {
   auth?: any;

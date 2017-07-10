@@ -1,7 +1,7 @@
 import { Request, ReplyNoContinue } from 'hapi';
 import * as Boom from 'boom';
-import { Group } from '../../db';
-import { Precondition } from '../framework';
+import { Group } from 'src/db';
+import { Precondition } from 'src/http/framework';
 
 class PreloadGroup extends Precondition {
 

@@ -1,6 +1,5 @@
-import { Model, ModelClass, Query, Statement } from '.';
-import { GetManyProperties } from './GetManyProperties';
-import { GetQuery, GetManyQuery, InsertStatement, UpdateStatement, UpdateManyStatement } from '..';
+import { GetQuery, GetManyQuery, InsertStatement, UpdateStatement, UpdateManyStatement } from 'src/db';
+import { GetManyProperties, Model, ModelClass, Query, Statement } from 'src/db/framework';
 
 abstract class Executor {
 

@@ -1,7 +1,7 @@
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import * as nconf from 'nconf';
-import { User, Membership } from '../../db';
+import { User, Membership } from 'src/db';
 import Credentials from './Credentials';
 
 const SALT_ROUNDS = 10;

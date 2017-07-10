@@ -1,8 +1,8 @@
 import * as knex from 'knex';
 import * as nconf from 'nconf';
-import { MessageBus } from '../common';
-import { Executor, Query, Statement, Command } from './framework';
-import Transaction from './Transaction';
+import { MessageBus } from 'src/common';
+import { Executor, Query, Statement, Command } from 'src/db/framework';
+import { Transaction } from 'src/db';
 
 class Database extends Executor {
 

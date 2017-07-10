@@ -1,6 +1,6 @@
 import { Request, ReplyNoContinue } from 'hapi';
-import { Handler } from '../../framework';
-import { Group, Membership } from '../../../db';
+import { Handler } from 'src/http/framework';
+import { Group, Membership } from 'src/db';
 
 class ListGroupsByUserHandler extends Handler {
 

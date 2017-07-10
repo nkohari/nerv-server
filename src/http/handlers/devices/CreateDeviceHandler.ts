@@ -1,8 +1,8 @@
 import { Request, ReplyNoContinue } from 'hapi';
 import * as Joi from 'joi';
-import { Handler } from '../../framework';
-import { PreloadAgent, PreloadGroup } from '../../preconditions';
-import { CreateDeviceCommand } from '../../../db';
+import { Handler } from 'src/http/framework';
+import { PreloadAgent, PreloadGroup } from 'src/http/preconditions';
+import { CreateDeviceCommand } from 'src/db';
 
 class CreateDeviceHandler extends Handler {
 

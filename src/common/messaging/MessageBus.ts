@@ -3,8 +3,8 @@ import * as nconf from 'nconf';
 import * as Logger from 'bunyan';
 import * as uuid from 'uuid/v4';
 import { Server } from 'hapi';
-import { Model } from '../../db';
-import Credentials from '../security/Credentials';
+import { Model } from 'src/db';
+import Credentials from 'src/common/security/Credentials';
 import Message from './Message';
 
 class MessageBus {

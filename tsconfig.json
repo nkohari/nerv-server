@@ -16,11 +16,13 @@
     "noUnusedLocals": true,
     "outDir": ".build",
     "paths": {
-      "*": ["*", "src/*"]
+      "src": ["src/*"],
+      "test": ["test/*"]
     },
     "target": "es6"
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "test/**/*"
   ]
 }

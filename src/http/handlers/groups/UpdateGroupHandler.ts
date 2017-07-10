@@ -1,8 +1,8 @@
 import { Request, ReplyNoContinue } from 'hapi';
 import * as Boom from 'boom';
 import * as Joi from 'joi';
-import { Handler } from '../../framework';
-import { Group } from '../../../db';
+import { Handler } from 'src/http/framework';
+import { Group } from 'src/db';
 
 class UpdateGroupHandler extends Handler {
 

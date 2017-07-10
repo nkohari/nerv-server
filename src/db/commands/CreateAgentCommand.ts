@@ -1,5 +1,5 @@
-import { Command } from '../framework';
-import { Agent, Device, Transaction } from '..';
+import { Agent, Device, Transaction } from 'src/db';
+import { Command } from 'src/db/framework';
 
 interface CreateAgentCommandResult {
   agent: Agent;

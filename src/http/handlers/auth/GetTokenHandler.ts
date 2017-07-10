@@ -1,6 +1,6 @@
 import { Request, ReplyNoContinue } from 'hapi';
-import { Handler } from '../../framework';
-import { Membership, User } from '../../../db';
+import { Handler } from 'src/http/framework';
+import { Membership, User } from 'src/db';
 
 class GetTokenHandler extends Handler {
 

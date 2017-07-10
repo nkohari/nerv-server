@@ -1,4 +1,4 @@
-import Precondition from './Precondition';
+import { Precondition } from 'src/http/framework';
 
 export interface PreconditionClass {
   assign: string;

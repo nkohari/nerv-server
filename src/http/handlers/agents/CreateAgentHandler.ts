@@ -1,10 +1,14 @@
 import { Request, ReplyNoContinue } from 'hapi';
-import * as Boom from 'boom';
 import * as Joi from 'joi';
-import { Handler } from '../../framework';
-import { CreateAgentCommand, Group } from '../../../db';
+import { Handler } from 'src/http/framework';
+import { PreloadGroup } from 'src/http/preconditions';
+import { CreateAgentCommand } from 'src/db';
 
 class CreateAgentHandler extends Handler {
+
+  static pre = [
+    PreloadGroup
+  ];
 
   static validate = {
     payload: {
@@ -20,15 +24,10 @@ class CreateAgentHandler extends Handler {
   handle(request: Request, reply: ReplyNoContinue) {
     const { groupid } = request.params;
     const { name } = request.payload;
-    this.database.get(Group, groupid).then(group => {
-      if (!group) {
-        reply(Boom.notFound(`No group with the id ${groupid} exists`));
-      }
-      const command = new CreateAgentCommand({ name, groupid }, request.payload.devices);
-      this.database.run(command).then(result => {
-        const { agent, devices } = result;
-        reply({ agent, devices }).code(201);
-      });
+    const command = new CreateAgentCommand({ name, groupid }, request.payload.devices);
+    this.database.run(command).then(result => {
+      const { agent, devices } = result;
+      reply({ agent, devices }).code(201);
     });
   }
 
