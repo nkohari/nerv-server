@@ -6,6 +6,8 @@ import { CreateGroupCommand } from 'src/db';
 
 class CreateGroupHandler extends Handler {
 
+  static route = 'post /groups';
+
   static validate = {
     payload: {
       name: Joi.string().required(),

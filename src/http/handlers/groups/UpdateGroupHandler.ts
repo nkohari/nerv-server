@@ -6,6 +6,8 @@ import { Group } from 'src/db';
 
 class UpdateGroupHandler extends Handler {
 
+  static route = 'put /groups/{groupid}';
+
   static validate = {
     payload: {
       name: Joi.string().required()

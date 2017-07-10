@@ -5,6 +5,8 @@ import { CreateUserCommand, Agent, Group } from 'src/db';
 
 class CreateUserHandler extends Handler {
 
+  static route = 'post /users';
+
   static auth = false;
 
   static validate = {

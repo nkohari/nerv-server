@@ -4,6 +4,8 @@ import { Agent } from 'src/db';
 
 class GetAgentHandler extends Handler {
 
+  static route = 'get /groups/{groupid}/agents/{agentid}';
+
   handle(request: Request, reply: ReplyNoContinue) {
     const { agentid } = request.params;
     this.database.get(Agent, agentid).then(agent => {

@@ -4,6 +4,8 @@ import { Agent, Membership } from 'src/db';
 
 class ListAgentsByUserHandler extends Handler {
 
+  static route = 'get /agents';
+
   handle(request: Request, reply: ReplyNoContinue) {
     const { userid } = request.auth.credentials;
     this.database.getMany(Membership, { userid }).then(memberships => {

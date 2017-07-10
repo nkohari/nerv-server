@@ -4,6 +4,8 @@ import { Membership, User } from 'src/db';
 
 class GetTokenHandler extends Handler {
 
+  static route = 'get /auth';
+
   handle(request: Request, reply: ReplyNoContinue) {
     const { userid } = request.auth.credentials;
     this.database.get(User, userid).then(user => {

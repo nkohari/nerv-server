@@ -5,6 +5,8 @@ import { User, Membership } from 'src/db';
 
 class LoginHandler extends Handler {
 
+  static route = 'post /auth';
+
   static auth = false;
 
   static validate = {

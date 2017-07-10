@@ -1,10 +1,11 @@
 import * as Logger from 'bunyan';
 import Forge from 'forge-di';
-import { Database } from 'src/db';
-import { MinebossServer, routes } from 'src/http';
-import * as preconditions from 'src/http/preconditions';
 import { Gatekeeper, Keymaster, MessageBus } from 'src/common';
 import { Application, Environment } from 'src/common/framework';
+import { Database } from 'src/db';
+import { MinebossServer } from 'src/http';
+import * as handlers from 'src/http/handlers';
+import * as preconditions from 'src/http/preconditions';
 
 class ServerEnvironment implements Environment {
 
@@ -23,14 +24,15 @@ class ServerEnvironment implements Environment {
     forge.bind('keymaster').to.type(Keymaster);
     forge.bind('messageBus').to.type(MessageBus);
 
-    Object.keys(routes).forEach(route => {
-      forge.bind('handler').to.type(routes[route]).when(route);
-    });
+    for (let name in handlers) {
+      const type = handlers[name];
+      forge.bind('handler').to.type(type).when(type.name);
+    }
 
-    Object.keys(preconditions).forEach(name => {
+    for (let name in preconditions) {
       const type = preconditions[name];
       forge.bind('precondition').to.type(type).when(type.name);
-    });
+    }
 
     return forge;
   }

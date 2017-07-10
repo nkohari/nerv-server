@@ -4,6 +4,8 @@ import { Agent, Device } from 'src/db';
 
 class ListDevicesByGroupHandler extends Handler {
 
+  static route = 'get /groups/{groupid}/devices';
+
   handle(request: Request, reply: ReplyNoContinue) {
     const { groupid } = request.params;
     this.database.getMany(Agent, { groupid }).then(agents => {

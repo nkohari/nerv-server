@@ -4,6 +4,8 @@ import { Group } from 'src/db';
 
 class GetGroupHandler extends Handler {
 
+  static route = 'get /groups/{groupid}';
+
   handle(request: Request, reply: ReplyNoContinue) {
     const { groupid } = request.params;
     this.database.get(Group, groupid).then(group => {

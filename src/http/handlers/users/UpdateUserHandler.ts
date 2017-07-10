@@ -5,6 +5,8 @@ import { User } from 'src/db';
 
 class UpdateUserHandler extends Handler {
 
+  static routes = 'put /users/{userid}';
+
   static validate = {
     payload: {
       email: Joi.string().email().required()

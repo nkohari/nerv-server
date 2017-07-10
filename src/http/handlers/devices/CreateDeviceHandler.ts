@@ -6,6 +6,8 @@ import { CreateDeviceCommand } from 'src/db';
 
 class CreateDeviceHandler extends Handler {
 
+  static route = 'post /groups/{groupid}/agents/{agentid}/devices';
+
   static pre = [
     PreloadGroup,
     PreloadAgent

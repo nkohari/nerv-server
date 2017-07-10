@@ -6,6 +6,8 @@ import { Agent } from 'src/db';
 
 class UpdateAgentHandler extends Handler {
 
+  static route = 'put /groups/{groupid}/agents/{agentid}';
+
   static validate = {
     payload: {
       name: Joi.string().required()

@@ -6,6 +6,8 @@ import { CreateAgentCommand } from 'src/db';
 
 class CreateAgentHandler extends Handler {
 
+  static route = 'post /groups/{groupid}/agents';
+
   static pre = [
     PreloadGroup
   ];

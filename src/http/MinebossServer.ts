@@ -5,8 +5,8 @@ import * as Forge from 'forge-di';
 import * as nconf from 'nconf';
 import * as Logger from 'bunyan';
 import { Gatekeeper, MessageBus } from 'src/common';
-import { Handler, HandlerClass, Precondition, PreconditionClass } from './framework';
-import { routes } from './handlers';
+import { Handler, HandlerClass, Precondition, PreconditionClass } from 'src/http/framework';
+import * as handlers from 'src/http/handlers';
 
 class MinebossServer {
 
@@ -51,10 +51,11 @@ class MinebossServer {
     return this.server.register([HapiAuthJwt, Nes])
     .then(() => this.configureAuth())
     .then(() => {
-      for (let route in routes) {
-        const tokens = route.split(' ', 2);
-        const handler = this.forge.get<Handler>('handler', route);
-        this.addHandler(tokens[0], tokens[1], routes[route], handler);
+      for (let name in handlers) {
+        const handlerClass = handlers[name] as HandlerClass;
+        const tokens = handlerClass.route.split(' ', 2);
+        const handler = this.forge.get<Handler>('handler', handlerClass.name);
+        this.addHandler(tokens[0], tokens[1], handlerClass, handler);
       }
       this.messageBus.start(this.server);
       return this.server.start();
@@ -77,8 +78,6 @@ class MinebossServer {
   }
 
   addHandler(verb: string, path: string, handlerClass: HandlerClass, handler: Handler) {
-    const name = (<any> handlerClass).name;
-
     const resolvePreconditions = (preconditions: PreconditionClass[]) => (
       preconditions.map(type => {
         const precond = this.forge.get<Precondition>('precondition', type.name);
@@ -103,7 +102,7 @@ class MinebossServer {
       config
     });
 
-    this.log.info(`Mounted ${name} at ${verb} ${path}`);
+    this.log.info(`Mounted ${handlerClass.name} at ${verb} ${path}`);
   }
 
   getServer(): Server {
