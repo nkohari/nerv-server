@@ -1,8 +1,8 @@
-import { Model } from 'src/db/framework';
+import { MutableModel } from 'src/db/framework';
 
 export type DeviceType = 'gpu' | 'cpu' | 'usb';
 
-class Device extends Model {
+class Device extends MutableModel {
 
   static table = 'devices';
 
@@ -25,8 +25,9 @@ class Device extends Model {
     return { groupid: this.groupid };
   }
 
-  serialize() {
+  toJSON() {
     return {
+      ...super.toJSON(),
       groupid: this.groupid,
       agentid: this.agentid,
       type: this.type,

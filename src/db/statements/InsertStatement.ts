@@ -14,11 +14,10 @@ class InsertStatement<T extends Model> implements Statement<T> {
   }
 
   execute(connection: knex, messageBus: MessageBus): Promise<T> {
+    console.log(this.properties);
     return connection(this.modelClass.table).insert({
       id: uuid(),
-      created: new Date(),
-      version: 1,
-      ...(this.properties as object)
+      ...(this.properties as any)
     })
     .returning('*')
     .then(rows => {

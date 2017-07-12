@@ -1,6 +1,6 @@
-import { Model } from 'src/db/framework';
+import { MutableModel } from 'src/db/framework';
 
-class Group extends Model {
+class Group extends MutableModel {
 
   static table = 'groups';
 
@@ -15,8 +15,9 @@ class Group extends Model {
     return { groupid: this.id };
   }
 
-  serialize() {
+  toJSON() {
     return {
+      ...super.toJSON(),
       name: this.name
     };
   }

@@ -1,6 +1,6 @@
-import { Model } from 'src/db/framework';
+import { MutableModel } from 'src/db/framework';
 
-class User extends Model {
+class User extends MutableModel {
 
   static table = 'users';
 
@@ -19,8 +19,9 @@ class User extends Model {
     return { userid: this.id };
   }
 
-  serialize() {
+  toJSON() {
     return {
+      ...super.toJSON(),
       username: this.username,
       email: this.email
     };

@@ -1,7 +1,8 @@
 import { Request, ReplyNoContinue } from 'hapi';
 import * as Joi from 'joi';
+import * as Boom from 'boom';
 import { Handler } from 'src/http/framework';
-import { CreateUserCommand, Agent, Group } from 'src/db';
+import { CreateUserCommand, Agent, Group, User } from 'src/db';
 
 class CreateUserHandler extends Handler {
 
@@ -22,17 +23,23 @@ class CreateUserHandler extends Handler {
     const { username, email, agentid } = request.payload;
     const plaintext = request.payload.password;
 
-    this.keymaster.hashPassword(plaintext).then(password => {
-      const command = new CreateUserCommand({ username, email, password });
-      this.database.run(command).then(result => {
-        const { user, group, membership } = result;
-        this.associateAgent(group, agentid).then(agent => {
-          reply({
-            user,
-            token: this.keymaster.createToken(user, [membership])
-          }).code(201);
+    this.database.get(User, { username }).then(existingUser => {
+      if (existingUser) {
+        reply(Boom.badRequest(`A user already exists with the username ${username}`));
+      } else {
+        return this.keymaster.hashPassword(plaintext).then(password => {
+          const command = new CreateUserCommand({ username, email, password });
+          this.database.run(command).then(result => {
+            const { user, group, membership } = result;
+            this.associateAgent(group, agentid).then(agent => {
+              reply({
+                user,
+                token: this.keymaster.createToken(user, [membership])
+              }).code(201);
+            });
+          });
         });
-      });
+      }
     });
   }
 

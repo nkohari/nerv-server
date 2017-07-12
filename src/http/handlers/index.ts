@@ -17,6 +17,10 @@ export { default as GetGroupHandler } from './groups/GetGroupHandler';
 export { default as ListGroupsByUserHandler } from './groups/ListGroupsByUserHandler';
 export { default as UpdateGroupHandler } from './groups/UpdateGroupHandler';
 
+export { default as CreateMeasuresByAgentHandler } from './measures/CreateMeasuresByAgentHandler';
+export { default as ListMeasuresByAgentHandler } from './measures/ListMeasuresByAgentHandler';
+export { default as ListMeasuresByDeviceHandler } from './measures/ListMeasuresByDeviceHandler';
+
 export { default as GetMembershipHandler } from './memberships/GetMembershipHandler';
 export { default as ListMembershipsByGroupHandler } from './memberships/ListMembershipsByGroupHandler';
 
