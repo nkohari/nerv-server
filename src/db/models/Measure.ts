@@ -1,9 +1,7 @@
-import { Model } from 'src/db/framework';
+class Measure {
 
-class Measure extends Model {
-
-  static table = 'measures';
-
+  id: string;
+  timestamp: string;
   groupid: string;
   agentid: string;
   deviceid: string;
@@ -18,7 +16,8 @@ class Measure extends Model {
   fanrpm: number;
 
   constructor(data: Partial<Measure> = {}) {
-    super(data);
+    this.id = data.id;
+    this.timestamp = data.timestamp;
     this.groupid = data.groupid;
     this.agentid = data.agentid;
     this.deviceid = data.deviceid;
@@ -33,13 +32,10 @@ class Measure extends Model {
     this.fanpercent = data.fanpercent;
   }
 
-  getSecurityContext() {
-    return { groupid: this.groupid };
-  }
-
   toJSON() {
     return {
-      ...super.toJSON(),
+      id: this.id,
+      timestamp: this.timestamp,
       groupid: this.groupid,
       agentid: this.agentid,
       deviceid: this.deviceid,

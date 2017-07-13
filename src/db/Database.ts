@@ -29,6 +29,10 @@ class Database extends Executor {
     });
   }
 
+  getRawConnection() {
+    return this.connection;
+  }
+
   query<T>(query: Query<T>): Promise<T> {
     return query.execute(this.connection);
   }

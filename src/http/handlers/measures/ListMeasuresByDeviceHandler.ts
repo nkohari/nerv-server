@@ -1,6 +1,5 @@
 import { Request, ReplyNoContinue } from 'hapi';
 import { Handler } from 'src/http/framework';
-import { Measure } from 'src/db';
 
 class ListMeasuresByDeviceHandler extends Handler {
 
@@ -8,7 +7,7 @@ class ListMeasuresByDeviceHandler extends Handler {
 
   handle(request: Request, reply: ReplyNoContinue) {
     const { deviceid } = request.params;
-    this.database.getMany(Measure, { deviceid }).then(measures => {
+    this.measureStore.find({ deviceid }).then(measures => {
       reply({ measures });
     });
   }

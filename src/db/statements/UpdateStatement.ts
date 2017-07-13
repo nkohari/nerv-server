@@ -1,8 +1,8 @@
 import * as knex from 'knex';
 import { MessageBus } from 'src/common';
-import { MutableModel, ModelClass, Statement } from 'src/db/framework';
+import { Model, ModelClass, Statement } from 'src/db/framework';
 
-class UpdateStatement<T extends MutableModel> implements Statement<T> {
+class UpdateStatement<T extends Model> implements Statement<T> {
 
   modelClass: ModelClass<T>;
   match: Partial<T>;

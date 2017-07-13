@@ -1,5 +1,6 @@
 export { default as Database } from './Database';
 export { default as Transaction } from './Transaction';
+export { default as MeasureStore } from './MeasureStore';
 export { default as Model } from './framework/Model';
 
 export { default as Agent } from './models/Agent';
@@ -19,5 +20,4 @@ export { default as UpdateManyStatement } from './statements/UpdateManyStatement
 export { default as CreateAgentCommand } from './commands/CreateAgentCommand';
 export { default as CreateDeviceCommand } from './commands/CreateDeviceCommand';
 export { default as CreateGroupCommand } from './commands/CreateGroupCommand';
-export { default as CreateManyMeasuresCommand } from './commands/CreateManyMeasuresCommand';
 export { default as CreateUserCommand } from './commands/CreateUserCommand';

@@ -1,7 +1,6 @@
 import { Request, ReplyNoContinue } from 'hapi';
 import * as Joi from 'joi';
 import { Handler } from 'src/http/framework';
-import { CreateManyMeasuresCommand } from 'src/db';
 
 class CreateMeasuresByAgentHandler extends Handler {
 
@@ -27,15 +26,13 @@ class CreateMeasuresByAgentHandler extends Handler {
   handle(request: Request, reply: ReplyNoContinue) {
     const { groupid, agentid } = request.params;
 
-    const measureDefs = request.payload.measures.map(measureDef => ({
+    const data = request.payload.measures.map(datum => ({
       groupid,
       agentid,
-      ...measureDef
+      ...datum
     }));
 
-    const command = new CreateManyMeasuresCommand(measureDefs);
-    this.database.run(command).then(result => {
-      const { measures } = result;
+    this.measureStore.add(data).then(measures => {
       reply({ measures }).code(201);
     });
   }

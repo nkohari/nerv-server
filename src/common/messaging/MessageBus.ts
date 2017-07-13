@@ -2,8 +2,9 @@ import * as ioredis from 'ioredis';
 import * as nconf from 'nconf';
 import * as Logger from 'bunyan';
 import * as uuid from 'uuid/v4';
+import { groupBy } from 'lodash';
 import { Server } from 'hapi';
-import { Model } from 'src/db';
+import { Measure, Model } from 'src/db';
 import Credentials from 'src/common/security/Credentials';
 import Message from './Message';
 
@@ -31,7 +32,15 @@ class MessageBus {
         next(credentials.canAccess(message.groupid));
       }
     });
+    this.server.subscription('/data', {
+      auth: { mode: 'required' },
+      filter: (path, message, options, next) => {
+        const credentials = options.credentials as Credentials;
+        next(credentials.canAccess(message.groupid));
+      }
+    });
     this.reader.psubscribe('changes:*');
+    this.reader.psubscribe('data:*');
     this.reader.on('pmessage', this.onMessageFromRedis);
   }
 
@@ -42,25 +51,30 @@ class MessageBus {
 
   announce(op: 'create' | 'update', models: Model[]) {
     models.forEach(model => {
-      const context = model.getSecurityContext();
-      if (context.groupid) {
-        this.publish(context.groupid, {
-          op,
-          type: model.constructor.name,
-          model
+      const { groupid } = model.getSecurityContext();
+      if (groupid) {
+        const message = new Message({
+          sender: this.ident,
+          groupid,
+          body: { type: model.constructor.name, op, model }
         });
+        this.server.publish('/changes', message);
+        this.writer.publish(`changes:${groupid}`, JSON.stringify(message));
       }
     });
   }
 
-  publish(groupid: string, body: any) {
-    const message = new Message({
-      sender: this.ident,
-      groupid,
-      body
-    });
-    this.server.publish('/changes', message);
-    this.writer.publish(`changes:${groupid}`, JSON.stringify(message));
+  announceData(measures: Measure[]) {
+    const groups = groupBy(measures, m => m.groupid);
+    for (let groupid in groups) {
+      const message = new Message({
+        sender: this.ident,
+        groupid,
+        body: { measures: groups[groupid] }
+      });
+      this.server.publish('/data', message);
+      this.writer.publish(`data:${groupid}`, JSON.stringify(message));
+    }
   }
 
   private onMessageFromRedis = (pattern: string, channel: string, json: any) => {
@@ -69,9 +83,21 @@ class MessageBus {
     // Ignore our own messages.
     if (message.sender === this.ident) return;
 
-    if (pattern === 'changes:*') {
-      this.log.debug(`Received change event for ${message.body.type}#${message.body.model.id}`, message.body);
-      this.server.publish('/changes', message);
+    switch (pattern) {
+
+      case 'changes:*':
+        this.log.debug(`Group ${message.groupid} received change event for ${message.body.type}#${message.body.model.id}`, message.body);
+        this.server.publish('/changes', message);
+        break;
+
+      case 'data:*':
+        this.log.debug(`Group ${message.groupid} received data event with ${message.body.length} measures`, message.body);
+        this.server.publish('/data', message);
+        break;
+
+      default:
+        throw new Error(`Received message on unknown pattern ${pattern}`);
+
     }
   }
 

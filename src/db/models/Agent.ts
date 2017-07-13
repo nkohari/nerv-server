@@ -1,6 +1,6 @@
-import { MutableModel } from 'src/db/framework';
+import { Model } from 'src/db/framework';
 
-class Agent extends MutableModel {
+class Agent extends Model {
 
   static table = 'agents';
 

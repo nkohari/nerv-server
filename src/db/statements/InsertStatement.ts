@@ -6,18 +6,20 @@ import { Model, ModelClass, Statement } from 'src/db/framework';
 class InsertStatement<T extends Model> implements Statement<T> {
 
   modelClass: ModelClass<T>;
-  properties: Partial<T>;
+  data: Partial<T>;
 
-  constructor(modelClass: ModelClass<T>, properties: Partial<T>) {
+  constructor(modelClass: ModelClass<T>, data: Partial<T>) {
     this.modelClass = modelClass;
-    this.properties = properties;
+    this.data = data;
   }
 
   execute(connection: knex, messageBus: MessageBus): Promise<T> {
-    console.log(this.properties);
     return connection(this.modelClass.table).insert({
       id: uuid(),
-      ...(this.properties as any)
+      created: new Date(),
+      updated: new Date(),
+      version: 1,
+      ...(this.data as object)
     })
     .returning('*')
     .then(rows => {

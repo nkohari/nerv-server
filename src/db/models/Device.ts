@@ -1,8 +1,8 @@
-import { MutableModel } from 'src/db/framework';
+import { Model } from 'src/db/framework';
 
 export type DeviceType = 'gpu' | 'cpu' | 'usb';
 
-class Device extends MutableModel {
+class Device extends Model {
 
   static table = 'devices';
 

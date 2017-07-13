@@ -1,6 +1,5 @@
 import { Request, ReplyNoContinue } from 'hapi';
 import { Handler } from 'src/http/framework';
-import { Measure } from 'src/db';
 
 class ListMeasuresByAgentHandler extends Handler {
 
@@ -8,7 +7,7 @@ class ListMeasuresByAgentHandler extends Handler {
 
   handle(request: Request, reply: ReplyNoContinue) {
     const { agentid } = request.params;
-    this.database.getMany(Measure, { agentid }).then(measures => {
+    this.measureStore.find({ agentid }).then(measures => {
       reply({ measures });
     });
   }
