@@ -30,7 +30,11 @@ class MinebossServer {
 
     const options: ServerConnectionOptions = {
       address: '0.0.0.0',
-      port: nconf.get('PORT')
+      port: nconf.get('PORT'),
+      tls: {
+        key: nconf.get('TLS_KEY'),
+        cert: nconf.get('TLS_CERT')
+      }
     };
 
     if (nconf.get('ALLOWED_ORIGINS')) {
@@ -41,6 +45,8 @@ class MinebossServer {
         }
       };
     }
+
+    console.log(options);
 
     this.server.connection(options);
 
@@ -68,14 +74,19 @@ class MinebossServer {
   }
 
   configureAuth() {
-    this.server.auth.strategy('jwt', 'jwt', 'required', {
+    this.server.auth.strategy('token', 'jwt', 'required', {
       key: nconf.get('AUTH_SECRET'),
+      verifyOptions: { algorithms: ['HS256'] },
       validateFunc: (request, tokenData, callback) => (
         this.gatekeeper.authorize(request, tokenData, callback)
-      ),
-      verifyOptions: {
-        algorithms: ['HS256']
-      }
+      )
+    });
+    this.server.auth.strategy('admin', 'jwt', {
+      key: nconf.get('AUTH_SECRET'),
+      verifyOptions: { algorithms: ['HS256'] },
+      validateFunc: (request, tokenData, callback) => (
+        this.gatekeeper.authorizeAdmin(request, tokenData, callback)
+      )
     });
   }
 

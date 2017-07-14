@@ -6,7 +6,7 @@ class ListMeasuresByDeviceHandler extends Handler {
 
   handle(request: Request, reply: Reply) {
     const { deviceid } = request.params;
-    this.measureStore.find({ deviceid }).then(measures => {
+    this.measureStore.getMeasures({ deviceid }).then(measures => {
       reply({ measures });
     });
   }

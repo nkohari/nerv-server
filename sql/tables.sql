@@ -1,25 +1,5 @@
 -- internals
 
-drop sequence if exists id_sequence;
-create sequence id_sequence;
-
-drop function if exists generate_id();
-create function generate_id(out result bigint)
-as $$
-declare
-  our_epoch bigint := 1500000000000;
-  seq_id bigint;
-  now_millis bigint;
-  shard_id int := 1;
-begin
-    select nextval('id_sequence') % 1024 INTO seq_id;
-    select floor(extract(epoch FROM clock_timestamp()) * 1000) into now_millis;
-    result := (now_millis - our_epoch) << 23;
-    result := result | (shard_id << 10);
-    result := result | (seq_id);
-end
-$$ language plpgsql;
-
 drop table if exists meta;
 create table meta (
   lastaggregation timestamp not null
@@ -112,6 +92,18 @@ create table devices (
   model text not null
 );
 
+drop table if exists coins;
+create table coins (
+  id text not null primary key,
+  created timestamp not null default now(),
+  updated timestamp not null default now(),
+  deleted timestamp,
+  version int not null default 1,
+  blocktime smallint,
+  hashes bigint,
+  blockreward smallint
+)
+
 drop table if exists measures;
 create table measures (
   id bigint not null primary key default generate_id(),
@@ -134,14 +126,10 @@ drop table if exists aggregates;
 create table aggregates (
   id bigint not null primary key default generate_id(),
   type text not null,
-  year smallint not null,
-  month smallint not null,
-  week smallint not null,
-  day smallint not null,
-  hour smallint not null,
-  groupid bigint not null,
-  agentid bigint not null,
-  deviceid bigint not null,
+  time timestamp not null,
+  groupid bigint,
+  agentid bigint,
+  deviceid bigint,
   coin text,
   hashrate int,
   load numeric(5, 4),

@@ -21,6 +21,14 @@ class Gatekeeper {
     callback(null, true, credentials);
   }
 
+  authorizeAdmin(request: Request, tokenData: any, callback: AuthorizeCallback) {
+    // If the token isn't the special admin token, pretend what they're asking for doesn't exist.
+    if (!tokenData.admin) {
+      return callback(Boom.notFound(), false, null);
+    }
+    callback(null, true, tokenData);
+  }
+
 }
 
 export default Gatekeeper;

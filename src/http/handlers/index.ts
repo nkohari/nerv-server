@@ -26,3 +26,5 @@ export { default as ListMembershipsByGroupHandler } from './memberships/ListMemb
 
 export { default as CreateUserHandler } from './users/CreateUserHandler';
 export { default as GetUserHandler } from './users/GetUserHandler';
+
+export { default as SyncCoinDataHandler } from './_internal/SyncCoinDataHandler';

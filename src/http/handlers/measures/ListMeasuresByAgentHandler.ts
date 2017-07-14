@@ -6,7 +6,7 @@ class ListMeasuresByAgentHandler extends Handler {
 
   handle(request: Request, reply: Reply) {
     const { agentid } = request.params;
-    this.measureStore.find({ agentid }).then(measures => {
+    this.measureStore.getMeasures({ agentid }).then(measures => {
       reply({ measures });
     });
   }

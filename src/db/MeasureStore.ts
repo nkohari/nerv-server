@@ -1,10 +1,10 @@
 import { MessageBus } from 'src/common';
-import { Database, Measure } from 'src/db';
+import { Database, Aggregate, Measure } from 'src/db';
 
-interface MeasureKeys {
-  groupid?: number;
-  agentid?: number;
-  deviceid?: number;
+interface GetMeasuresOptions {
+  groupid?: string;
+  agentid?: string;
+  deviceid?: string;
 }
 
 class MeasureStore {
@@ -17,7 +17,11 @@ class MeasureStore {
     this.messageBus = messageBus;
   }
 
-  find(where: MeasureKeys): Promise<Measure[]> {
+  getAggregates(where: GetMeasuresOptions, from: Date, to: Date): Promise<Aggregate[]> {
+    return Promise.resolve([]); // TODO
+  }
+
+  getMeasures(where: GetMeasuresOptions): Promise<Measure[]> {
     const connection = this.database.getRawConnection();
     return connection('measures').where(where as any).then(rows => {
       return rows.map(row => new Measure(row));

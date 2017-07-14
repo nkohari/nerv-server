@@ -13,6 +13,7 @@
   "author": "Nate Kohari",
   "license": "MIT",
   "dependencies": {
+    "axios": "^0.16.2",
     "bcrypt": "^1.0.2",
     "bluebird": "^3.5.0",
     "boom": "^5.1.0",
