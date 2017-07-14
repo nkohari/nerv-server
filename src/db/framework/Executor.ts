@@ -6,7 +6,7 @@ abstract class Executor {
   abstract query<T>(query: Query<T>): Promise<T>;
   abstract execute<T>(statement: Statement<T>): Promise<T>;
 
-  get<T extends Model>(modelClass: ModelClass<T>, idOrProperties: number | Partial<T>): Promise<T> {
+  get<T extends Model>(modelClass: ModelClass<T>, idOrProperties: string | Partial<T>): Promise<T> {
     return this.query(new GetQuery(modelClass, idOrProperties));
   }
 

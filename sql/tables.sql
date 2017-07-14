@@ -133,8 +133,12 @@ create table measures (
 drop table if exists aggregates;
 create table aggregates (
   id bigint not null primary key default generate_id(),
-  type text,
-  bucket timestamp not null,
+  type text not null,
+  year smallint not null,
+  month smallint not null,
+  week smallint not null,
+  day smallint not null,
+  hour smallint not null,
   groupid bigint not null,
   agentid bigint not null,
   deviceid bigint not null,

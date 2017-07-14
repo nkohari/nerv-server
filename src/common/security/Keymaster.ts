@@ -27,7 +27,7 @@ class Keymaster {
 
   verifyToken(token: string): Credentials {
     const decoded = jwt.verify(token, nconf.get('AUTH_SECRET'), { algorithms: ['HS256'] });
-    return new Credentials(decoded);
+    return new Credentials(decoded as any);
   }
 
 }

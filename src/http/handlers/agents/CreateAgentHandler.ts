@@ -12,9 +12,6 @@ class CreateAgentHandler extends Handler {
   static route = 'post /groups/{groupid}/agents';
 
   static validate = {
-    params: {
-      groupid: Joi.number()
-    },
     payload: {
       name: Joi.string().required(),
       devices: Joi.array().required().items(Joi.object({
