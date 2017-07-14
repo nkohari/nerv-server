@@ -1,18 +1,20 @@
-import { Request, ReplyNoContinue } from 'hapi';
 import * as Joi from 'joi';
-import { Handler } from 'src/http/framework';
-import { PreloadGroup } from 'src/http/preconditions';
-import { CreateAgentCommand } from 'src/db';
+import { Handler, Request, Reply } from 'src/http/framework';
+import { CreateAgentCommand, Device } from 'src/db';
+
+type CreateAgentHandlerPayload = {
+  name: string;
+  devices: Partial<Device>[];
+};
 
 class CreateAgentHandler extends Handler {
 
   static route = 'post /groups/{groupid}/agents';
 
-  static pre = [
-    PreloadGroup
-  ];
-
   static validate = {
+    params: {
+      groupid: Joi.number()
+    },
     payload: {
       name: Joi.string().required(),
       devices: Joi.array().required().items(Joi.object({
@@ -23,7 +25,7 @@ class CreateAgentHandler extends Handler {
     }
   };
 
-  handle(request: Request, reply: ReplyNoContinue) {
+  handle(request: Request<CreateAgentHandlerPayload>, reply: Reply) {
     const { groupid } = request.params;
     const { name } = request.payload;
     const command = new CreateAgentCommand({ name, groupid }, request.payload.devices);

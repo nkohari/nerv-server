@@ -1,4 +1,3 @@
-import * as uuid from 'uuid/v4';
 import * as knex from 'knex';
 import { MessageBus } from 'src/common';
 import { Model, ModelClass, Statement } from 'src/db/framework';
@@ -15,7 +14,6 @@ class InsertStatement<T extends Model> implements Statement<T> {
 
   execute(connection: knex, messageBus: MessageBus): Promise<T> {
     return connection(this.modelClass.table).insert({
-      id: uuid(),
       created: new Date(),
       updated: new Date(),
       version: 1,

@@ -1,5 +1,5 @@
-import { Request } from 'hapi';
 import * as Boom from 'boom';
+import { Request } from 'src/http/framework';
 import Credentials from './Credentials';
 
 type AuthorizeCallback = (err: Error, isValid: boolean, credentials: Credentials) => any;

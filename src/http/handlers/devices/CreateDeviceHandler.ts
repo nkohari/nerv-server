@@ -1,17 +1,10 @@
-import { Request, ReplyNoContinue } from 'hapi';
 import * as Joi from 'joi';
-import { Handler } from 'src/http/framework';
-import { PreloadAgent, PreloadGroup } from 'src/http/preconditions';
-import { CreateDeviceCommand } from 'src/db';
+import { Handler, Request, Reply } from 'src/http/framework';
+import { CreateDeviceCommand, Device } from 'src/db';
 
 class CreateDeviceHandler extends Handler {
 
   static route = 'post /groups/{groupid}/agents/{agentid}/devices';
-
-  static pre = [
-    PreloadGroup,
-    PreloadAgent
-  ];
 
   static validate = {
     payload: {
@@ -21,13 +14,13 @@ class CreateDeviceHandler extends Handler {
     }
   };
 
-  handle(request: Request, reply: ReplyNoContinue) {
-    const { agent, group } = request.pre as any;
+  handle(request: Request<Partial<Device>>, reply: Reply) {
+    const { groupid, agentid } = request.params;
     const { type, vendor, model } = request.payload;
 
     const command = new CreateDeviceCommand({
-      groupid: group.id,
-      agentid: agent.id,
+      groupid,
+      agentid,
       type,
       vendor,
       model

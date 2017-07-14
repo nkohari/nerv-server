@@ -1,6 +1,5 @@
-import { Request, ReplyNoContinue } from 'hapi';
 import * as Joi from 'joi';
-import { Handler } from 'src/http/framework';
+import { Handler, Request, Reply } from 'src/http/framework';
 import { User } from 'src/db';
 
 class UpdateUserHandler extends Handler {
@@ -13,7 +12,7 @@ class UpdateUserHandler extends Handler {
     }
   };
 
-  handle(request: Request, reply: ReplyNoContinue) {
+  handle(request: Request, reply: Reply) {
     const match = { id: request.auth.credentials.userid };
     const patch = request.payload as Partial<User>;
     this.database.update(User, match, patch).then(user => {

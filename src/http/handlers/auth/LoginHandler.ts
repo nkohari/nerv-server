@@ -1,7 +1,11 @@
-import { Request, ReplyNoContinue } from 'hapi';
 import * as Joi from 'joi';
-import { Handler } from 'src/http/framework';
+import { Handler, Request, Reply } from 'src/http/framework';
 import { User, Membership } from 'src/db';
+
+type LoginHandlerPayload = {
+  username: string;
+  password: string;
+};
 
 class LoginHandler extends Handler {
 
@@ -16,7 +20,7 @@ class LoginHandler extends Handler {
     }
   };
 
-  handle(request: Request, reply: ReplyNoContinue) {
+  handle(request: Request<LoginHandlerPayload>, reply: Reply) {
     const { username, password } = request.payload;
 
     this.database.get(User, { username }).then(user => {

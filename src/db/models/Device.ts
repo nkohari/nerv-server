@@ -1,14 +1,12 @@
 import { Model } from 'src/db/framework';
 
-export type DeviceType = 'gpu' | 'cpu' | 'usb';
-
 class Device extends Model {
 
   static table = 'devices';
 
   groupid: string;
   agentid: string;
-  type: DeviceType;
+  type: string;
   vendor: string;
   model: string;
 

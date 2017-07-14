@@ -4,7 +4,7 @@ import { Model, ModelClass, Query } from 'src/db/framework';
 class GetQuery<T extends Model> implements Query<T> {
 
   modelClass: ModelClass<T>;
-  idOrProperties: string | Partial<T>;
+  idOrProperties: number | string | Partial<T>;
 
   constructor(modelClass: ModelClass<T>, idOrProperties: string | Partial<T>) {
     this.modelClass = modelClass;

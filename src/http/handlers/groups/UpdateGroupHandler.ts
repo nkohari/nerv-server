@@ -1,7 +1,6 @@
-import { Request, ReplyNoContinue } from 'hapi';
 import * as Boom from 'boom';
 import * as Joi from 'joi';
-import { Handler } from 'src/http/framework';
+import { Handler, Request, Reply } from 'src/http/framework';
 import { Group } from 'src/db';
 
 class UpdateGroupHandler extends Handler {
@@ -14,7 +13,7 @@ class UpdateGroupHandler extends Handler {
     }
   };
 
-  handle(request: Request, reply: ReplyNoContinue) {
+  handle(request: Request<Partial<Group>>, reply: Reply) {
     const match = { id: request.params.groupid };
     const patch = request.payload as Partial<Group>;
     this.database.update(Group, match, patch).then(group => {

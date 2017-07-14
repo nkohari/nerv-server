@@ -1,14 +1,33 @@
--- internal tables
+-- internals
 
-drop table if exists buckets;
-drop table if exists etl;
+drop sequence if exists id_sequence;
+create sequence id_sequence;
 
+drop function if exists generate_id();
+create function generate_id(out result bigint)
+as $$
+declare
+  our_epoch bigint := 1500000000000;
+  seq_id bigint;
+  now_millis bigint;
+  shard_id int := 1;
+begin
+    select nextval('id_sequence') % 1024 INTO seq_id;
+    select floor(extract(epoch FROM clock_timestamp()) * 1000) into now_millis;
+    result := (now_millis - our_epoch) << 23;
+    result := result | (shard_id << 10);
+    result := result | (seq_id);
+end
+$$ language plpgsql;
+
+drop table if exists meta;
 create table meta (
   lastaggregation timestamp not null
 );
 
-create table buckets (
-  id timestamp not null primary key,
+drop table if exists timebuckets;
+create table timebuckets (
+  time timestamp not null primary key,
   year smallint not null,
   month smallint not null,
   week smallint not null,
@@ -16,7 +35,7 @@ create table buckets (
   hour smallint not null
 );
 
-insert into buckets (id, year, month, day, week, hour)
+insert into timebuckets (time, year, month, day, week, hour)
 (
   select
     date,
@@ -35,19 +54,9 @@ insert into buckets (id, year, month, day, week, hour)
 
 --- regular tables
 
-drop table users;
-drop table groups;
-drop table memberships;
-drop table agents;
-drop table devices;
-drop table measures;
-drop table aggregates;
-drop type device_type;
-
-create type device_type as enum ('gpu', 'cpu');
-
+drop table if exists users;
 create table users (
-  id uuid not null primary key,
+  id bigint not null primary key default generate_id(),
   created timestamp not null default now(),
   updated timestamp not null default now(),
   deleted timestamp,
@@ -57,8 +66,9 @@ create table users (
   email text
 );
 
+drop table if exists groups;
 create table groups (
-  id uuid not null primary key,
+  id bigint not null primary key default generate_id(),
   created timestamp not null default now(),
   updated timestamp not null default now(),
   deleted timestamp,
@@ -66,46 +76,49 @@ create table groups (
   name text not null
 );
 
+drop table if exists memberships;
 create table memberships (
-  id uuid not null primary key,
+  id bigint not null primary key default generate_id(),
   created timestamp not null default now(),
   updated timestamp not null default now(),
   deleted timestamp,
   version int not null default 1,
-  userid uuid not null,
-  groupid uuid not null
+  userid bigint not null,
+  groupid bigint not null
 );
 
+drop table if exists agents;
 create table agents (
-  id uuid primary key,
+  id bigint not null primary key default generate_id(),
   created timestamp not null default now(),
   updated timestamp not null default now(),
   deleted timestamp,
   version int not null default 1,
-  groupid uuid,
+  groupid bigint,
   name text
 );
 
+drop table if exists devices;
 create table devices (
-  id uuid not null primary key,
+  id bigint not null primary key default generate_id(),
   created timestamp not null default now(),
   updated timestamp not null default now(),
   deleted timestamp,
   version int not null default 1,
-  groupid uuid not null,
-  agentid uuid not null,
-  type device_type not null,
+  groupid bigint not null,
+  agentid bigint not null,
+  type text not null,
   vendor text not null,
   model text not null
 );
 
+drop table if exists measures;
 create table measures (
-  id uuid not null primary key,
-  created timestamp not null default now(),
-  bucketid timestamp not null default date_trunc('hour', now()),
-  groupid uuid not null,
-  agentid uuid not null,
-  deviceid uuid not null,
+  id bigint not null primary key default generate_id(),
+  time timestamp not null default now(),
+  groupid bigint not null,
+  agentid bigint not null,
+  deviceid bigint not null,
   coin text,
   hashrate int,
   load numeric(5, 4),
@@ -117,13 +130,14 @@ create table measures (
   fanrpm smallint
 );
 
+drop table if exists aggregates;
 create table aggregates (
-  id bigserial not null primary key,
+  id bigint not null primary key default generate_id(),
   type text,
-  bucketid timestamp not null,
-  groupid uuid not null,
-  agentid uuid not null,
-  deviceid uuid not null,
+  bucket timestamp not null,
+  groupid bigint not null,
+  agentid bigint not null,
+  deviceid bigint not null,
   coin text,
   hashrate int,
   load numeric(5, 4),

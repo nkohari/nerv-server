@@ -1,12 +1,11 @@
-import { Request, ReplyNoContinue } from 'hapi';
-import { Handler } from 'src/http/framework';
+import { Handler, Request, Reply } from 'src/http/framework';
 import { Group, Membership } from 'src/db';
 
 class ListGroupsByUserHandler extends Handler {
 
   static route = 'get /groups';
 
-  handle(request: Request, reply: ReplyNoContinue) {
+  handle(request: Request, reply: Reply) {
     const { userid } = request.auth.credentials;
     this.database.getMany(Membership, { userid }).then(memberships => {
       const groupids = memberships.map(m => m.groupid);

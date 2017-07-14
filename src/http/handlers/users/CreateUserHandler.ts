@@ -1,8 +1,14 @@
-import { Request, ReplyNoContinue } from 'hapi';
 import * as Joi from 'joi';
 import * as Boom from 'boom';
-import { Handler } from 'src/http/framework';
+import { Handler, Request, Reply } from 'src/http/framework';
 import { CreateUserCommand, Agent, Group, User } from 'src/db';
+
+type CreateUserHandlerPayload = {
+  username: string;
+  password: string;
+  email: string;
+  agentid: string;
+};
 
 class CreateUserHandler extends Handler {
 
@@ -19,7 +25,7 @@ class CreateUserHandler extends Handler {
     }
   };
 
-  handle(request: Request, reply: ReplyNoContinue) {
+  handle(request: Request<CreateUserHandlerPayload>, reply: Reply) {
     const { username, email, agentid } = request.payload;
     const plaintext = request.payload.password;
 

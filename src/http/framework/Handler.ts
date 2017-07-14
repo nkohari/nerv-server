@@ -1,6 +1,6 @@
-import { Request, ReplyNoContinue } from 'hapi';
 import { Keymaster } from 'src/common';
 import { Database, MeasureStore } from 'src/db';
+import { Request, Reply } from 'src/http/framework';
 
 abstract class Handler {
 
@@ -14,7 +14,7 @@ abstract class Handler {
     this.measureStore = measureStore;
   }
 
-  abstract handle(request: Request, reply: ReplyNoContinue): void;
+  abstract handle(request: Request, reply: Reply): void;
 
 }
 

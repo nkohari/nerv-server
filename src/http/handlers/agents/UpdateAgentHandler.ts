@@ -1,7 +1,6 @@
-import { Request, ReplyNoContinue } from 'hapi';
 import * as Boom from 'boom';
 import * as Joi from 'joi';
-import { Handler } from 'src/http/framework';
+import { Handler, Request, Reply } from 'src/http/framework';
 import { Agent } from 'src/db';
 
 class UpdateAgentHandler extends Handler {
@@ -14,9 +13,9 @@ class UpdateAgentHandler extends Handler {
     }
   };
 
-  handle(request: Request, reply: ReplyNoContinue) {
+  handle(request: Request<Partial<Agent>>, reply: Reply) {
     const match = { id: request.params.agentid };
-    const patch = request.payload as Partial<Agent>;
+    const patch = request.payload;
     this.database.update(Agent, match, patch).then(agent => {
       if (!agent) {
         reply(Boom.notFound(`No agent with the id ${match.id} exists`));

@@ -70,7 +70,9 @@ class MinebossServer {
   configureAuth() {
     this.server.auth.strategy('jwt', 'jwt', 'required', {
       key: nconf.get('AUTH_SECRET'),
-      validateFunc: (request, tokenData, callback) => this.gatekeeper.authorize(request, tokenData, callback),
+      validateFunc: (request, tokenData, callback) => (
+        this.gatekeeper.authorize(request, tokenData, callback)
+      ),
       verifyOptions: {
         algorithms: ['HS256']
       }
@@ -98,7 +100,7 @@ class MinebossServer {
     this.server.route({
       method: <HTTP_METHODS_PARTIAL> verb,
       path,
-      handler: (request, reply) => handler.handle(request, reply),
+      handler: (request, reply) => handler.handle(request as any, reply),
       config
     });
 

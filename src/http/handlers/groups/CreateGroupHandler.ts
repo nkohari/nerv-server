@@ -1,8 +1,11 @@
-import { Request, ReplyNoContinue } from 'hapi';
 import * as Joi from 'joi';
-import { Handler } from 'src/http/framework';
-import { Credentials } from 'src/common';
+import { Handler, Request, Reply } from 'src/http/framework';
 import { CreateGroupCommand } from 'src/db';
+
+type CreateGroupHandlerPayload = {
+  name: string;
+  members: string[];
+};
 
 class CreateGroupHandler extends Handler {
 
@@ -15,8 +18,8 @@ class CreateGroupHandler extends Handler {
     }
   };
 
-  handle(request: Request, reply: ReplyNoContinue) {
-    const credentials: Credentials = request.auth.credentials;
+  handle(request: Request<CreateGroupHandlerPayload>, reply: Reply) {
+    const { credentials } = request.auth;
     const { name, members } = request.payload;
 
     // Ensure that the creator of the group is a member.

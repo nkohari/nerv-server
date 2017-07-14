@@ -1,6 +1,10 @@
-import { Request, ReplyNoContinue } from 'hapi';
 import * as Joi from 'joi';
-import { Handler } from 'src/http/framework';
+import { Handler, Request, Reply } from 'src/http/framework';
+import { Measure } from 'src/db';
+
+type CreateMeasuresByAgentPayload = {
+  measures: Partial<Measure>[];
+};
 
 class CreateMeasuresByAgentHandler extends Handler {
 
@@ -23,7 +27,7 @@ class CreateMeasuresByAgentHandler extends Handler {
     }
   };
 
-  handle(request: Request, reply: ReplyNoContinue) {
+  handle(request: Request<CreateMeasuresByAgentPayload>, reply: Reply) {
     const { groupid, agentid } = request.params;
 
     const data = request.payload.measures.map(datum => ({
