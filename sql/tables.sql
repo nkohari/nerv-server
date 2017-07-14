@@ -99,9 +99,12 @@ create table coins (
   updated timestamp not null default now(),
   deleted timestamp,
   version int not null default 1,
+  name text not null,
+  ccid text not null,
+  algorithm text,
+  blockreward smallint,
   blocktime smallint,
-  hashes bigint,
-  blockreward smallint
+  networkhashrate bigint
 )
 
 drop table if exists measures;

@@ -1,4 +1,4 @@
-import { GetQuery, GetManyQuery, InsertStatement, UpdateStatement, UpdateManyStatement } from 'src/db';
+import { GetQuery, GetAllQuery, GetManyQuery, InsertStatement, UpdateStatement, UpdateManyStatement } from 'src/db';
 import { GetManyProperties, Model, ModelClass, Query, Statement } from 'src/db/framework';
 
 abstract class Executor {
@@ -8,6 +8,10 @@ abstract class Executor {
 
   get<T extends Model>(modelClass: ModelClass<T>, idOrProperties: string | Partial<T>): Promise<T> {
     return this.query(new GetQuery(modelClass, idOrProperties));
+  }
+
+  getAll<T extends Model>(modelClass: ModelClass<T>): Promise<T[]> {
+    return this.query(new GetAllQuery(modelClass));
   }
 
   getMany<T extends Model>(modelClass: ModelClass<T>, properties: GetManyProperties<T>): Promise<T[]> {

@@ -46,8 +46,6 @@ class MinebossServer {
       };
     }
 
-    console.log(options);
-
     this.server.connection(options);
 
     this.server.on('request-error', (request, err) => {

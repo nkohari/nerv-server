@@ -17,6 +17,18 @@ begin
 end
 $$ language plpgsql;
 
+create or replace function coins_per_second(coinid text, hashrate integer, out result numeric)
+as $$
+declare
+  coin record;
+  usershare numeric;
+begin
+  select * from coins into coin where id = coinid;
+  select (hashrate::numeric / coin.networkhashrate::numeric) into usershare;
+  select (usershare * coin.blockreward) / coin.blocktime::numeric into result;
+end
+$$ language plpgsql;
+
 create or replace function aggregate_measures(out result boolean)
 returns boolean as $$
 declare

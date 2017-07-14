@@ -8,12 +8,14 @@ export { default as Measure } from './measures/Measure';
 export { default as TimePeriod } from './measures/TimePeriod';
 
 export { default as Agent } from './models/Agent';
+export { default as Coin } from './models/Coin';
 export { default as Device } from './models/Device';
 export { default as Group } from './models/Group';
 export { default as Membership } from './models/Membership';
 export { default as User } from './models/User';
 
 export { default as GetQuery } from './queries/GetQuery';
+export { default as GetAllQuery } from './queries/GetAllQuery';
 export { default as GetManyQuery } from './queries/GetManyQuery';
 
 export { default as InsertStatement } from './statements/InsertStatement';

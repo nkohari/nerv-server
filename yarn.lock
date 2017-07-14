@@ -6,15 +6,13 @@
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@types/bcrypt/-/bcrypt-1.0.0.tgz#2c523da191db7d41c06d17de235335c985effe9b"
 
-"@types/bluebird-global@^3.5.3":
-  version "3.5.3"
-  resolved "https://registry.yarnpkg.com/@types/bluebird-global/-/bluebird-global-3.5.3.tgz#82e5b7e083873d55dd46ff93c9b06607cf2ace0f"
-  dependencies:
-    "@types/bluebird" "*"
-
 "@types/bluebird@*":
   version "2.0.32"
   resolved "https://registry.yarnpkg.com/@types/bluebird/-/bluebird-2.0.32.tgz#d2f9ec8c57b330ac938f0e98dfee0b7e8d759d30"
+
+"@types/bluebird@^3.5.8":
+  version "3.5.8"
+  resolved "https://registry.yarnpkg.com/@types/bluebird/-/bluebird-3.5.8.tgz#242a83379f06c90f96acf6d1aeab3af6faebdb98"
 
 "@types/boom@*":
   version "4.3.5"
