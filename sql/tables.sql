@@ -1,38 +1,9 @@
--- internals
+-- metadata
 
 drop table if exists meta;
 create table meta (
   lastaggregation timestamp not null
 );
-
-drop table if exists timebuckets;
-create table timebuckets (
-  time timestamp not null primary key,
-  year smallint not null,
-  month smallint not null,
-  week smallint not null,
-  day smallint not null,
-  hour smallint not null
-);
-
-insert into timebuckets (time, year, month, day, week, hour)
-(
-  select
-    date,
-    extract(year from date),
-    extract(month from date),
-    extract(day from date),
-    extract(week from date),
-    extract(hour from date)
-  from
-  generate_series(
-    '2015-01-01 00:00:00'::timestamp,
-    '2050-01-01 00:00:00'::timestamp,
-    '1 hour'
-  ) date
-);
-
---- metadata tables
 
 drop table if exists coins;
 create table coins (
@@ -172,8 +143,10 @@ create table aggregates (
   agentid bigint,
   deviceid bigint,
   coin text,
-  hashrate bigint,
+  tot_hashrate bigint,
+  tot_coins numeric(20, 10),
   avg_hashrate int,
+  avg_coins numeric(20, 10),
   avg_load numeric(5, 4),
   avg_power numeric(4, 2),
   avg_coreclock smallint,

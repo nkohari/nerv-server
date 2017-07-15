@@ -17,30 +17,34 @@ begin
 end
 $$ language plpgsql;
 
-create or replace function coins_per_second(coinid text, hashrate integer, out result numeric)
+create or replace function coins_per_hour(var_symbol text, var_hashrate numeric, out var_result numeric)
 as $$
 declare
-  coin record;
-  usershare numeric;
+  var_network record;
+  var_shareofwork numeric;
 begin
-  select * from coins into coin where id = coinid;
-  select (hashrate::numeric / coin.networkhashrate::numeric) into usershare;
-  select (usershare * coin.blockreward) / coin.blocktime::numeric into result;
+  select * from networkdata nd into var_network
+    where nd.symbol = var_symbol
+    order by time desc limit 1;
+  select (var_hashrate / var_network.networkhashrate) into var_shareofwork;
+  select (3600 * var_shareofwork * var_network.blockreward) / var_network.blocktime::numeric into var_result;
 end
 $$ language plpgsql;
 
 create or replace function aggregate_measures(out result boolean)
 returns boolean as $$
 declare
-  endtime timestamp;
+  var_starttime timestamp;
+  var_endtime timestamp;
 begin
-  select date_trunc('hour', time) from measures order by time desc limit 1 into endtime;
-  select aggregate_measures_between((select lastaggregation from meta), endtime) into result;
-  update meta set lastaggregation = endtime;
+  select lastaggregation from meta into var_starttime;
+  select date_trunc('hour', time) from measures order by time desc limit 1 into var_endtime;
+  select aggregate_measures_between(var_starttime, var_endtime) into result;
+  update meta set lastaggregation = var_endtime;
 end
 $$ language plpgsql;
 
-create or replace function aggregate_measures_between(starttime timestamp, endtime timestamp)
+create or replace function aggregate_measures_between(var_starttime timestamp, var_endtime timestamp)
 returns boolean as $$
 begin
 
@@ -51,7 +55,7 @@ begin
       agentid,
       deviceid,
       coin
-    from measures where time between starttime and endtime
+    from measures where time between var_starttime and var_endtime
   ),
   minute_buckets as (
     select
@@ -60,7 +64,7 @@ begin
       agentid,
       deviceid,
       coin
-    from generate_series(starttime, endtime, '1 minute') time
+    from generate_series(var_starttime, var_endtime, '1 minute') time
     join aggregation_groups on 1=1
   ),
   hour_buckets as (
@@ -70,7 +74,7 @@ begin
       agentid,
       deviceid,
       coin
-    from generate_series(starttime, endtime, '1 hour') time
+    from generate_series(var_starttime, var_endtime, '1 hour') time
     join aggregation_groups on 1=1
   ),
   measures_by_minute as (
@@ -81,6 +85,7 @@ begin
       minute_buckets.deviceid,
       minute_buckets.coin,
       coalesce(avg(hashrate), 0) as avg_hashrate,
+      coins_per_hour(minute_buckets.coin, coalesce(avg(hashrate), 0)) as avg_coins,
       avg(load) as avg_load,
       avg(power) as avg_power,
       avg(temp) as avg_temp,
@@ -120,8 +125,10 @@ begin
     agentid,
     deviceid,
     coin,
-    hashrate,
+    tot_hashrate,
+    tot_coins,
     avg_hashrate,
+    avg_coins,
     avg_load,
     avg_power,
     avg_temp,
@@ -152,8 +159,10 @@ begin
     hour_buckets.agentid,
     hour_buckets.deviceid,
     hour_buckets.coin,
-    sum(avg_hashrate) as hashrate,
+    sum(avg_hashrate) as tot_hashrate,
+    sum(avg_coins) as tot_coins,
     avg(avg_hashrate) as avg_hashrate,
+    avg(avg_coins) as avg_coins,
     avg(avg_load) as avg_load,
     avg(avg_power) as avg_power,
     avg(avg_temp) as avg_temp,
