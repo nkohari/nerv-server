@@ -1,3 +1,5 @@
+import { Audience } from 'src/common';
+
 class Credentials {
 
   userid: string;
@@ -10,8 +12,14 @@ class Credentials {
     this.groups = data.groups || [];
   }
 
-  canAccess(groupid: string): boolean {
-    return this.groups.indexOf(groupid) !== -1;
+  isMemberOf(audience: Audience): boolean {
+    if (audience.userid) {
+      return this.userid === audience.userid;
+    }
+    if (audience.groupid) {
+      return this.groups.indexOf(audience.groupid) !== -1;
+    }
+    return true;
   }
 
 }

@@ -1,34 +1,28 @@
-import { Model } from 'src/db/framework';
+class NetworkData {
 
-class Coin extends Model {
-
-  static table = 'coins';
-
-  ccid: string;
-  name: string;
+  id: string;
+  time: Date;
+  symbol: string;
   algorithm: string;
   blockreward: number;
   blocktime: number;
   networkhashrate: number;
 
-  constructor(data: Partial<Coin> = {}) {
-    super(data);
-    this.ccid = data.ccid;
-    this.name = data.name;
+  constructor(data: Partial<NetworkData> = {}) {
+    this.id = data.id;
+    this.time = data.time;
+    this.symbol = data.symbol;
     this.algorithm = data.algorithm;
     this.blockreward = data.blockreward;
     this.blocktime = data.blocktime;
     this.networkhashrate = data.networkhashrate;
   }
 
-  getSecurityContext() {
-    return {};
-  }
-
   toJSON() {
     return {
-      ...super.toJSON(),
-      name: this.name,
+      id: this.id,
+      time: this.time,
+      symbol: this.symbol,
       algorithm: this.algorithm,
       blockreward: this.blockreward,
       blocktime: this.blocktime,
@@ -38,4 +32,4 @@ class Coin extends Model {
 
 }
 
-export default Coin;
+export default NetworkData;

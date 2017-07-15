@@ -1,3 +1,4 @@
+import { Audience } from 'src/common';
 import { Model } from 'src/db/framework';
 
 class User extends Model {
@@ -15,8 +16,8 @@ class User extends Model {
     this.password = data.password;
   }
 
-  getSecurityContext() {
-    return { userid: this.id };
+  getAudience() {
+    return new Audience({ userid: this.id });
   }
 
   toJSON() {

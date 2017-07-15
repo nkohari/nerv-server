@@ -1,4 +1,4 @@
-import { SecurityContext } from 'src/common';
+import { Audience } from 'src/common';
 
 abstract class Model {
 
@@ -16,7 +16,7 @@ abstract class Model {
     this.version = data.version;
   }
 
-  abstract getSecurityContext(): SecurityContext;
+  abstract getAudience(): Audience;
 
   toJSON(): object {
     return {

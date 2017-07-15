@@ -1,7 +1,8 @@
 import * as Joi from 'joi';
 import * as Boom from 'boom';
+import { Keymaster } from 'src/common';
+import { Database, CreateUserCommand, Agent, Group, User } from 'src/db';
 import { Handler, Request, Reply } from 'src/http/framework';
-import { CreateUserCommand, Agent, Group, User } from 'src/db';
 
 type CreateUserHandlerPayload = {
   username: string;
@@ -24,6 +25,13 @@ class CreateUserHandler extends Handler {
       agentid: Joi.string().allow(null)
     }
   };
+
+  keymaster: Keymaster;
+
+  constructor(database: Database, keymaster: Keymaster) {
+    super(database);
+    this.keymaster = keymaster;
+  }
 
   handle(request: Request<CreateUserHandlerPayload>, reply: Reply) {
     const { username, email, agentid } = request.payload;

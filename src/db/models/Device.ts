@@ -1,3 +1,4 @@
+import { Audience } from 'src/common';
 import { Model } from 'src/db/framework';
 
 class Device extends Model {
@@ -19,8 +20,8 @@ class Device extends Model {
     this.model = data.model;
   }
 
-  getSecurityContext() {
-    return { groupid: this.groupid };
+  getAudience() {
+    return new Audience({ groupid: this.groupid });
   }
 
   toJSON() {

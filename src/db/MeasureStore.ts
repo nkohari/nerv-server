@@ -38,7 +38,7 @@ class MeasureStore {
           .then(rows => (rows.length === 0) ? null : new Measure(rows[0]))
         ))
       ).then(measures => {
-        this.messageBus.announceData(measures);
+        this.messageBus.announceMeasures(measures);
         return measures;
       });
     });

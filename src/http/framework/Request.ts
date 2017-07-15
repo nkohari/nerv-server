@@ -8,9 +8,10 @@ interface RequestParams {
   userid: string;
 }
 
-export interface Request<TPayload = {}, TPrereqs = {}> {
+export interface Request<TPayload = {}, TQuery = {}, TPrereqs = {}> {
   auth: { credentials: Credentials };
   params: RequestParams;
   payload: TPayload;
+  query: TQuery;
   pre: TPrereqs;
 }

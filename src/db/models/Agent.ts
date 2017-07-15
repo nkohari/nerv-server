@@ -1,3 +1,4 @@
+import { Audience } from 'src/common';
 import { Model } from 'src/db/framework';
 
 class Agent extends Model {
@@ -13,8 +14,8 @@ class Agent extends Model {
     this.name = data.name;
   }
 
-  getSecurityContext() {
-    return { groupid: this.groupid };
+  getAudience() {
+    return new Audience({ groupid: this.groupid });
   }
 
   toJSON() {

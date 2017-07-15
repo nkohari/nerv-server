@@ -1,6 +1,7 @@
 import * as Joi from 'joi';
+import { Keymaster } from 'src/common';
 import { Handler, Request, Reply } from 'src/http/framework';
-import { User, Membership } from 'src/db';
+import { Database, User, Membership } from 'src/db';
 
 type LoginHandlerPayload = {
   username: string;
@@ -19,6 +20,13 @@ class LoginHandler extends Handler {
       password: Joi.string().required()
     }
   };
+
+  keymaster: Keymaster;
+
+  constructor(database: Database, keymaster: Keymaster) {
+    super(database);
+    this.keymaster = keymaster;
+  }
 
   handle(request: Request<LoginHandlerPayload>, reply: Reply) {
     const { username, password } = request.payload;

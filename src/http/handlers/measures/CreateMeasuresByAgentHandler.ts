@@ -1,6 +1,6 @@
 import * as Joi from 'joi';
 import { Handler, Request, Reply } from 'src/http/framework';
-import { Measure } from 'src/db';
+import { Database, MeasureStore, Measure } from 'src/db';
 
 type CreateMeasuresByAgentPayload = {
   measures: Partial<Measure>[];
@@ -26,6 +26,13 @@ class CreateMeasuresByAgentHandler extends Handler {
       }))
     }
   };
+
+  measureStore: MeasureStore;
+
+  constructor(database: Database, measureStore: MeasureStore) {
+    super(database);
+    this.measureStore = measureStore;
+  }
 
   handle(request: Request<CreateMeasuresByAgentPayload>, reply: Reply) {
     const { groupid, agentid } = request.params;

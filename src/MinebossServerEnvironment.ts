@@ -2,7 +2,7 @@ import * as Logger from 'bunyan';
 import Forge from 'forge-di';
 import { Gatekeeper, Keymaster, MessageBus } from 'src/common';
 import { Application, Environment } from 'src/common/framework';
-import { Database, MeasureStore } from 'src/db';
+import { Database, MeasureStore, MetadataStore } from 'src/db';
 import { MinebossServer } from 'src/http';
 import * as handlers from 'src/http/handlers';
 import * as preconditions from 'src/http/preconditions';
@@ -22,6 +22,7 @@ class ServerEnvironment implements Environment {
     forge.bind('gatekeeper').to.type(Gatekeeper);
     forge.bind('keymaster').to.type(Keymaster);
     forge.bind('measureStore').to.type(MeasureStore);
+    forge.bind('metadataStore').to.type(MetadataStore);
     forge.bind('messageBus').to.type(MessageBus);
     forge.bind('server').to.type(MinebossServer);
 

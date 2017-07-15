@@ -1,6 +1,6 @@
 import * as Boom from 'boom';
+import { Audience, Credentials } from 'src/common';
 import { Request } from 'src/http/framework';
-import Credentials from './Credentials';
 
 type AuthorizeCallback = (err: Error, isValid: boolean, credentials: Credentials) => any;
 
@@ -8,13 +8,11 @@ class Gatekeeper {
 
   authorize(request: Request, tokenData: any, callback: AuthorizeCallback) {
     const { groupid, userid } = request.params;
+
     const credentials = new Credentials(tokenData);
+    const audience = new Audience({ groupid, userid });
 
-    if (groupid && !credentials.canAccess(groupid)) {
-      return callback(Boom.forbidden("You don't have access to that resource"), false, null);
-    }
-
-    if (userid && credentials.userid !== userid) {
+    if (!credentials.isMemberOf(audience)) {
       return callback(Boom.forbidden("You don't have access to that resource"), false, null);
     }
 

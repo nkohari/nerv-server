@@ -1,12 +1,14 @@
+import { Audience } from 'src/common';
+
 class Message {
 
   sender: string;
-  groupid: string;
+  audience: Audience;
   body: any;
 
   constructor(data: Partial<Message> = {}) {
     this.sender = data.sender;
-    this.groupid = data.groupid;
+    this.audience = new Audience(data.audience);
     this.body = data.body;
   }
 

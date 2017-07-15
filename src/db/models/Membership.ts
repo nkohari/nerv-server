@@ -1,3 +1,4 @@
+import { Audience } from 'src/common';
 import { Model } from 'src/db/framework';
 
 class Membership extends Model {
@@ -13,8 +14,8 @@ class Membership extends Model {
     this.groupid = data.groupid;
   }
 
-  getSecurityContext() {
-    return { groupid: this.groupid };
+  getAudience() {
+    return new Audience({ groupid: this.groupid });
   }
 
   toJSON() {

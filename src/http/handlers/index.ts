@@ -27,4 +27,8 @@ export { default as ListMembershipsByGroupHandler } from './memberships/ListMemb
 export { default as CreateUserHandler } from './users/CreateUserHandler';
 export { default as GetUserHandler } from './users/GetUserHandler';
 
-export { default as SyncCoinDataHandler } from './_internal/SyncCoinDataHandler';
+export { default as GetExchangeRatesHandler } from './metadata/GetExchangeRatesHandler';
+export { default as GetNetworkDataHandler } from './metadata/GetNetworkDataHandler';
+
+export { default as SyncExchangeRatesHandler } from './_internal/SyncExchangeRatesHandler';
+export { default as SyncNetworkDataHandler } from './_internal/SyncNetworkDataHandler';

@@ -1,3 +1,5 @@
+import { Audience } from 'src/common';
+
 class Measure {
 
   id: string;
@@ -30,6 +32,10 @@ class Measure {
     this.temp = data.temp;
     this.fanrpm = data.fanrpm;
     this.fanpercent = data.fanpercent;
+  }
+
+  getAudience() {
+    return new Audience({ groupid: this.groupid });
   }
 
   toJSON() {
