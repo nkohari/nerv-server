@@ -32,8 +32,9 @@ $$ language plpgsql;
 create or replace function aggregate_measures(out result boolean)
 returns boolean as $$
 declare
-  endtime timestamp := now();
+  endtime timestamp;
 begin
+  select date_trunc('hour', time) from measures order by time desc limit 1 into endtime;
   select aggregate_measures_between((select lastaggregation from meta), endtime) into result;
   update meta set lastaggregation = endtime;
 end
@@ -43,44 +44,148 @@ create or replace function aggregate_measures_between(starttime timestamp, endti
 returns boolean as $$
 begin
 
+  with
+  aggregation_groups as (
+    select distinct
+      groupid,
+      agentid,
+      deviceid,
+      coin
+    from measures where time between starttime and endtime
+  ),
+  minute_buckets as (
+    select
+      time,
+      groupid,
+      agentid,
+      deviceid,
+      coin
+    from generate_series(starttime, endtime, '1 minute') time
+    join aggregation_groups on 1=1
+  ),
+  hour_buckets as (
+    select
+      time,
+      groupid,
+      agentid,
+      deviceid,
+      coin
+    from generate_series(starttime, endtime, '1 hour') time
+    join aggregation_groups on 1=1
+  ),
+  measures_by_minute as (
+    select
+      minute_buckets.time,
+      minute_buckets.groupid,
+      minute_buckets.agentid,
+      minute_buckets.deviceid,
+      minute_buckets.coin,
+      coalesce(avg(hashrate), 0) as avg_hashrate,
+      avg(load) as avg_load,
+      avg(power) as avg_power,
+      avg(temp) as avg_temp,
+      avg(coreclock) as avg_coreclock,
+      avg(ramclock) as avg_ramclock,
+      avg(fanrpm) as avg_fanrpm,
+      avg(fanpercent) as avg_fanpercent,
+      min(hashrate) as min_hashrate,
+      min(load) as min_load,
+      min(power) as min_power,
+      min(temp) as min_temp,
+      min(coreclock) as min_coreclock,
+      min(ramclock) as min_ramclock,
+      min(fanrpm) as min_fanrpm,
+      min(fanpercent) as min_fanpercent,
+      max(hashrate) as max_hashrate,
+      max(load) as max_load,
+      max(power) as max_power,
+      max(temp) as max_temp,
+      max(coreclock) as max_coreclock,
+      max(ramclock) as max_ramclock,
+      max(fanrpm) as max_fanrpm,
+      max(fanpercent) as max_fanpercent
+    from minute_buckets
+      left join measures on
+        minute_buckets.time = date_trunc('minute', measures.time) and
+        minute_buckets.groupid = measures.groupid and
+        minute_buckets.agentid = measures.agentid and
+        minute_buckets.deviceid = measures.deviceid and
+        minute_buckets.coin = measures.coin
+    group by
+      minute_buckets.time, minute_buckets.groupid, minute_buckets.agentid, minute_buckets.deviceid, minute_buckets.coin
+  )
   insert into aggregates (
-    type, time, groupid, agentid, deviceid, coin,
-    hashrate, load, power, temp, coreclock, ramclock, fanrpm, fanpercent
+    time,
+    groupid,
+    agentid,
+    deviceid,
+    coin,
+    hashrate,
+    avg_hashrate,
+    avg_load,
+    avg_power,
+    avg_temp,
+    avg_coreclock,
+    avg_ramclock,
+    avg_fanrpm,
+    avg_fanpercent,
+    min_hashrate,
+    min_load,
+    min_power,
+    min_temp,
+    min_coreclock,
+    min_ramclock,
+    min_fanrpm,
+    min_fanpercent,
+    max_hashrate,
+    max_load,
+    max_power,
+    max_temp,
+    max_coreclock,
+    max_ramclock,
+    max_fanrpm,
+    max_fanpercent
   )
   select
-    'avg', timebuckets.time, groupid, agentid, deviceid, coin,
-    avg(hashrate), avg(load), avg(power), avg(temp), avg(coreclock), avg(ramclock), avg(fanrpm), avg(fanpercent)
-  from measures
-    join timebuckets on date_trunc('hour', measures.time) = timebuckets.time
-  where timebuckets.time between starttime and endtime
+    hour_buckets.time,
+    hour_buckets.groupid,
+    hour_buckets.agentid,
+    hour_buckets.deviceid,
+    hour_buckets.coin,
+    sum(avg_hashrate) as hashrate,
+    avg(avg_hashrate) as avg_hashrate,
+    avg(avg_load) as avg_load,
+    avg(avg_power) as avg_power,
+    avg(avg_temp) as avg_temp,
+    avg(avg_coreclock) as avg_coreclock,
+    avg(avg_ramclock) as avg_ramclock,
+    avg(avg_fanrpm) as avg_fanrpm,
+    avg(avg_fanpercent) as avg_fanpercent,
+    min(min_hashrate) as min_hashrate,
+    min(min_load) as min_load,
+    min(min_power) as min_power,
+    min(min_temp) as min_temp,
+    min(min_coreclock) as min_coreclock,
+    min(min_ramclock) as min_ramclock,
+    min(min_fanrpm) as min_fanrpm,
+    min(min_fanpercent) as min_fanpercent,
+    max(max_hashrate) as max_hashrate,
+    max(max_load) as max_load,
+    max(max_power) as max_power,
+    max(max_temp) as max_temp,
+    max(max_coreclock) as max_coreclock,
+    max(max_ramclock) as max_ramclock,
+    max(max_fanrpm) as max_fanrpm,
+    max(max_fanpercent) as max_fanpercent
+  from measures_by_minute
+    join hour_buckets on
+      hour_buckets.time = date_trunc('minute', measures_by_minute.time) and
+      hour_buckets.groupid = measures_by_minute.groupid and
+      hour_buckets.agentid = measures_by_minute.agentid and
+      hour_buckets.deviceid = measures_by_minute.deviceid and
+      hour_buckets.coin = measures_by_minute.coin
   group by
-    timebuckets.time, groupid, rollup(agentid, deviceid), coin;
-
-  insert into aggregates (
-    type, time, groupid, agentid, deviceid, coin,
-    hashrate, load, power, temp, coreclock, ramclock, fanrpm, fanpercent
-  )
-  select
-    'min', timebuckets.time, groupid, agentid, deviceid, coin,
-    min(hashrate), min(load), min(power), min(temp), min(coreclock), min(ramclock), min(fanrpm), min(fanpercent)
-  from measures
-    join timebuckets on date_trunc('hour', measures.time) = timebuckets.time
-  where timebuckets.time between starttime and endtime
-  group by
-    timebuckets.time, groupid, rollup(agentid, deviceid), coin;
-
-  insert into aggregates (
-    type, time, groupid, agentid, deviceid, coin,
-    hashrate, load, power, temp, coreclock, ramclock, fanrpm, fanpercent
-  )
-  select
-    'max', timebuckets.time, groupid, agentid, deviceid, coin,
-    max(hashrate), max(load), max(power), max(temp), max(coreclock), max(ramclock), max(fanrpm), max(fanpercent)
-  from measures
-    join timebuckets on date_trunc('hour', measures.time) = timebuckets.time
-  where timebuckets.time between starttime and endtime
-  group by
-    timebuckets.time, groupid, rollup(agentid, deviceid), coin;
+    hour_buckets.time, hour_buckets.groupid, rollup(hour_buckets.agentid, hour_buckets.deviceid), hour_buckets.coin;
 
   return true;
 end
