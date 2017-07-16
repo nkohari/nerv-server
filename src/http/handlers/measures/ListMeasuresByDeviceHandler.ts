@@ -13,8 +13,8 @@ class ListMeasuresByDeviceHandler extends Handler {
   }
 
   handle(request: Request, reply: Reply) {
-    const { deviceid } = request.params;
-    this.measureStore.getMeasures({ deviceid }).then(measures => {
+    const { groupid, agentid, deviceid } = request.params;
+    this.measureStore.getMeasures({ groupid, agentid, deviceid }).then(measures => {
       reply({ measures });
     });
   }

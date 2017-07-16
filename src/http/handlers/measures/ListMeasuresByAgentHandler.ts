@@ -13,8 +13,8 @@ class ListMeasuresByAgentHandler extends Handler {
   }
 
   handle(request: Request, reply: Reply) {
-    const { agentid } = request.params;
-    this.measureStore.getMeasures({ agentid }).then(measures => {
+    const { groupid, agentid } = request.params;
+    this.measureStore.getMeasures({ groupid, agentid }).then(measures => {
       reply({ measures });
     });
   }

@@ -54,7 +54,7 @@ begin
       groupid,
       agentid,
       deviceid,
-      coin
+      symbol
     from measures where time between var_starttime and var_endtime
   ),
   minute_buckets as (
@@ -63,7 +63,7 @@ begin
       groupid,
       agentid,
       deviceid,
-      coin
+      symbol
     from generate_series(var_starttime, var_endtime, '1 minute') time
     join aggregation_groups on 1=1
   ),
@@ -73,19 +73,19 @@ begin
       groupid,
       agentid,
       deviceid,
-      coin
+      symbol
     from generate_series(var_starttime, var_endtime, '1 hour') time
     join aggregation_groups on 1=1
   ),
-  measures_by_minute as (
+  samples_by_minute as (
     select
-      minute_buckets.time,
-      minute_buckets.groupid,
-      minute_buckets.agentid,
-      minute_buckets.deviceid,
-      minute_buckets.coin,
+      bucket.time,
+      bucket.groupid,
+      bucket.agentid,
+      bucket.deviceid,
+      bucket.symbol,
       coalesce(avg(hashrate), 0) as avg_hashrate,
-      coins_per_hour(minute_buckets.coin, coalesce(avg(hashrate), 0)) as avg_coins,
+      coins_per_hour(bucket.symbol, coalesce(avg(hashrate), 0)) as avg_coins,
       avg(load) as avg_load,
       avg(power) as avg_power,
       avg(temp) as avg_temp,
@@ -109,22 +109,22 @@ begin
       max(ramclock) as max_ramclock,
       max(fanrpm) as max_fanrpm,
       max(fanpercent) as max_fanpercent
-    from minute_buckets
-      left join measures on
-        minute_buckets.time = date_trunc('minute', measures.time) and
-        minute_buckets.groupid = measures.groupid and
-        minute_buckets.agentid = measures.agentid and
-        minute_buckets.deviceid = measures.deviceid and
-        minute_buckets.coin = measures.coin
+    from minute_buckets bucket
+      left join measures m on
+        bucket.time = date_trunc('minute', m.time) and
+        bucket.groupid = m.groupid and
+        bucket.agentid = m.agentid and
+        bucket.deviceid = m.deviceid and
+        bucket.symbol = m.symbol
     group by
-      minute_buckets.time, minute_buckets.groupid, minute_buckets.agentid, minute_buckets.deviceid, minute_buckets.coin
+      bucket.time, bucket.groupid, bucket.agentid, bucket.deviceid, bucket.symbol
   )
   insert into aggregates (
     time,
     groupid,
     agentid,
     deviceid,
-    coin,
+    symbol,
     tot_hashrate,
     tot_coins,
     avg_hashrate,
@@ -154,11 +154,11 @@ begin
     max_fanpercent
   )
   select
-    hour_buckets.time,
-    hour_buckets.groupid,
-    hour_buckets.agentid,
-    hour_buckets.deviceid,
-    hour_buckets.coin,
+    bucket.time,
+    bucket.groupid,
+    bucket.agentid,
+    bucket.deviceid,
+    bucket.symbol,
     sum(avg_hashrate) as tot_hashrate,
     sum(avg_coins) as tot_coins,
     avg(avg_hashrate) as avg_hashrate,
@@ -171,6 +171,7 @@ begin
     avg(avg_fanrpm) as avg_fanrpm,
     avg(avg_fanpercent) as avg_fanpercent,
     min(min_hashrate) as min_hashrate,
+    min(min_coins) as min_coins,
     min(min_load) as min_load,
     min(min_power) as min_power,
     min(min_temp) as min_temp,
@@ -179,6 +180,7 @@ begin
     min(min_fanrpm) as min_fanrpm,
     min(min_fanpercent) as min_fanpercent,
     max(max_hashrate) as max_hashrate,
+    max(max_coins) as max_coins,
     max(max_load) as max_load,
     max(max_power) as max_power,
     max(max_temp) as max_temp,
@@ -186,15 +188,15 @@ begin
     max(max_ramclock) as max_ramclock,
     max(max_fanrpm) as max_fanrpm,
     max(max_fanpercent) as max_fanpercent
-  from measures_by_minute
-    join hour_buckets on
-      hour_buckets.time = date_trunc('minute', measures_by_minute.time) and
-      hour_buckets.groupid = measures_by_minute.groupid and
-      hour_buckets.agentid = measures_by_minute.agentid and
-      hour_buckets.deviceid = measures_by_minute.deviceid and
-      hour_buckets.coin = measures_by_minute.coin
+  from samples_by_minute sample
+    join hour_buckets bucket on
+      bucket.time = date_trunc('minute', sample.time) and
+      bucket.groupid = sample.groupid and
+      bucket.agentid = sample.agentid and
+      bucket.deviceid = sample.deviceid and
+      bucket.symbol = sample.symbol
   group by
-    hour_buckets.time, hour_buckets.groupid, rollup(hour_buckets.agentid, hour_buckets.deviceid), hour_buckets.coin;
+    bucket.time, bucket.groupid, rollup(bucket.agentid, bucket.deviceid), bucket.symbol;
 
   return true;
 end
