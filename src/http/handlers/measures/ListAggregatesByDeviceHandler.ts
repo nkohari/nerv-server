@@ -10,8 +10,8 @@ class ListAggregatesByDeviceHandler extends Handler {
 
   static validate = {
     query: {
-      from: Joi.string().isoDate().required(),
-      to: Joi.string().isoDate().required()
+      from: Joi.string().isoDate().allow(null).default(null),
+      to: Joi.string().isoDate().allow(null).default(null)
     }
   };
 
@@ -25,7 +25,7 @@ class ListAggregatesByDeviceHandler extends Handler {
   handle(request: ListAggregatesByDeviceRequest, reply: Reply) {
     const { groupid, agentid, deviceid } = request.params;
     const { from, to } = request.query;
-    this.measureStore.getAggregates({ groupid, agentid, deviceid }, from, to).then(aggregates => {
+    this.measureStore.getAggregates({ groupid, agentid, deviceid }, { from, to }).then(aggregates => {
       reply({ aggregates });
     });
   }
