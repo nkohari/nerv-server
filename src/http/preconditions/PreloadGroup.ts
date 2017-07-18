@@ -1,13 +1,12 @@
-import { Request, ReplyNoContinue } from 'hapi';
 import * as Boom from 'boom';
 import { Group } from 'src/db';
-import { Precondition } from 'src/http/framework';
+import { Precondition, Request, Reply } from 'src/http/framework';
 
 class PreloadGroup extends Precondition {
 
   static assign = 'group';
 
-  execute(request: Request, reply: ReplyNoContinue) {
+  execute(request: Request, reply: Reply) {
     const { groupid } = request.params;
 
     if (!groupid) {

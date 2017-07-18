@@ -18,13 +18,10 @@ export { default as ListGroupsByUserHandler } from './groups/ListGroupsByUserHan
 export { default as UpdateGroupHandler } from './groups/UpdateGroupHandler';
 
 export { default as CreateMeasuresByAgentHandler } from './measures/CreateMeasuresByAgentHandler';
-export { default as ListAggregatesByAgentHandler } from './measures/ListAggregatesByAgentHandler';
-export { default as ListAggregatesByDeviceHandler } from './measures/ListAggregatesByDeviceHandler';
-export { default as ListAggregatesByGroupHandler } from './measures/ListAggregatesByGroupHandler';
-export { default as ListAggregatesByUserHandler } from './measures/ListAggregatesByUserHandler';
-export { default as ListMeasuresByAgentHandler } from './measures/ListMeasuresByAgentHandler';
-export { default as ListMeasuresByDeviceHandler } from './measures/ListMeasuresByDeviceHandler';
-export { default as ListMeasuresByGroupHandler } from './measures/ListMeasuresByGroupHandler';
+export { default as ListSamplesByAgentHandler } from './measures/ListSamplesByAgentHandler';
+export { default as ListSamplesByDeviceHandler } from './measures/ListSamplesByDeviceHandler';
+export { default as ListSamplesByGroupHandler } from './measures/ListSamplesByGroupHandler';
+export { default as ListSamplesByUserHandler } from './measures/ListSamplesByUserHandler';
 
 export { default as GetMembershipHandler } from './memberships/GetMembershipHandler';
 export { default as ListMembershipsByGroupHandler } from './memberships/ListMembershipsByGroupHandler';

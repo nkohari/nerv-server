@@ -14,7 +14,7 @@ class CreateMeasuresByAgentHandler extends Handler {
     payload: {
       measures: Joi.array().items(Joi.object({
         deviceid: Joi.string().required(),
-        coin: Joi.string().required(),
+        symbol: Joi.string().required(),
         hashrate: Joi.number().integer().required(),
         load: Joi.number().min(0).max(1).required(),
         power: Joi.number().required(),
@@ -36,14 +36,7 @@ class CreateMeasuresByAgentHandler extends Handler {
 
   handle(request: Request<CreateMeasuresByAgentPayload>, reply: Reply) {
     const { groupid, agentid } = request.params;
-
-    const data = request.payload.measures.map(datum => ({
-      groupid,
-      agentid,
-      ...datum
-    }));
-
-    this.measureStore.add(data).then(measures => {
+    this.measureStore.recordMeasures(groupid, agentid, request.payload.measures).then(measures => {
       reply({ measures }).code(201);
     });
   }

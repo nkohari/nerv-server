@@ -8,6 +8,7 @@ class Device extends Model {
   groupid: string;
   agentid: string;
   type: string;
+  name: string;
   vendor: string;
   model: string;
 
@@ -16,6 +17,7 @@ class Device extends Model {
     this.groupid = data.groupid;
     this.agentid = data.agentid;
     this.type = data.type;
+    this.name = data.name;
     this.vendor = data.vendor;
     this.model = data.model;
   }
@@ -30,6 +32,7 @@ class Device extends Model {
       groupid: this.groupid,
       agentid: this.agentid,
       type: this.type,
+      name: this.name,
       vendor: this.vendor,
       model: this.model
     };

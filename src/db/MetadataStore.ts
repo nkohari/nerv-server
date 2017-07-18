@@ -23,6 +23,14 @@ class MetadataStore {
     .then(rows => rows.map(row => new Currency(row)));
   }
 
+  hasCurrency(symbol: string): Promise<boolean> {
+    const connection = this.database.getRawConnection();
+    return connection('currencies')
+    .count('*').as('count')
+    .where({ symbol })
+    .then(rows => rows && rows.length === 1 && rows[0].count === 1);
+  }
+
   getCurrentNetworkData(symbol: string): Promise<NetworkData> {
     const connection = this.database.getRawConnection();
     return connection('networkdata')

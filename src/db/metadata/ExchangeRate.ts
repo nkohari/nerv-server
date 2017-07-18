@@ -11,7 +11,7 @@ class ExchangeRate {
     this.time = data.time;
     this.symbol = data.symbol;
     this.currency = data.currency;
-    this.amount = data.amount;
+    this.amount = Number(data.amount);
   }
 
   toJSON() {

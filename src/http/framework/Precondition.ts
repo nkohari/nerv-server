@@ -1,5 +1,6 @@
-import { Request, ReplyWithContinue } from 'hapi';
 import { Database } from 'src/db';
+import { Request } from './Request';
+import { Reply } from './Reply';
 
 abstract class Precondition {
 
@@ -9,7 +10,7 @@ abstract class Precondition {
     this.database = database;
   }
 
-  abstract execute(request: Request, reply: ReplyWithContinue): void;
+  abstract execute(request: Request, reply: Reply): void;
 
 }
 

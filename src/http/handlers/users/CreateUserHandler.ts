@@ -1,7 +1,7 @@
 import * as Joi from 'joi';
-import * as Boom from 'boom';
 import { Keymaster } from 'src/common';
-import { Database, CreateUserCommand, Agent, Group, User } from 'src/db';
+import { Database, CreateUserCommand, Agent, Group } from 'src/db';
+import { CheckUsernameCollision } from 'src/http/preconditions';
 import { Handler, Request, Reply } from 'src/http/framework';
 
 type CreateUserHandlerPayload = {
@@ -26,6 +26,10 @@ class CreateUserHandler extends Handler {
     }
   };
 
+  static pre = [
+    CheckUsernameCollision
+  ];
+
   keymaster: Keymaster;
 
   constructor(database: Database, keymaster: Keymaster) {
@@ -37,23 +41,17 @@ class CreateUserHandler extends Handler {
     const { username, email, agentid } = request.payload;
     const plaintext = request.payload.password;
 
-    this.database.get(User, { username }).then(existingUser => {
-      if (existingUser) {
-        reply(Boom.badRequest(`A user already exists with the username ${username}`));
-      } else {
-        return this.keymaster.hashPassword(plaintext).then(password => {
-          const command = new CreateUserCommand({ username, email, password });
-          this.database.run(command).then(result => {
-            const { user, group, membership } = result;
-            this.associateAgent(group, agentid).then(agent => {
-              reply({
-                user,
-                token: this.keymaster.createToken(user, [membership])
-              }).code(201);
-            });
-          });
+    return this.keymaster.hashPassword(plaintext).then(password => {
+      const command = new CreateUserCommand({ username, email, password });
+      this.database.run(command).then(result => {
+        const { user, group, membership } = result;
+        this.associateAgent(group, agentid).then(agent => {
+          reply({
+            user,
+            token: this.keymaster.createToken(user, [membership])
+          }).code(201);
         });
-      }
+      });
     });
   }
 

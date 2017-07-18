@@ -4,8 +4,8 @@ export { default as MeasureStore } from './MeasureStore';
 export { default as MetadataStore } from './MetadataStore';
 export { default as Model } from './framework/Model';
 
-export { default as Aggregate } from './measures/Aggregate';
 export { default as Measure } from './measures/Measure';
+export { default as Sample } from './measures/Sample';
 export { default as TimePeriod } from './measures/TimePeriod';
 
 export { default as Coin } from './metadata/Coin';

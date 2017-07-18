@@ -13,8 +13,8 @@ class NetworkData {
     this.time = data.time;
     this.symbol = data.symbol;
     this.algorithm = data.algorithm;
-    this.blockreward = data.blockreward;
-    this.blocktime = data.blocktime;
+    this.blockreward = Number(data.blockreward);
+    this.blocktime = Number(data.blocktime);
     this.networkhashrate = data.networkhashrate;
   }
 

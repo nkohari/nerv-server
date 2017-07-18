@@ -8,12 +8,14 @@ class User extends Model {
   username: string;
   email: string;
   password: string;
+  currency: string;
 
   constructor(data: Partial<User> = {}) {
     super(data);
     this.username = data.username;
     this.email = data.email;
     this.password = data.password;
+    this.currency = data.currency;
   }
 
   getAudience() {
@@ -24,7 +26,8 @@ class User extends Model {
     return {
       ...super.toJSON(),
       username: this.username,
-      email: this.email
+      email: this.email,
+      currency: this.currency
     };
   }
 

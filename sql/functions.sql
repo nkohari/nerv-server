@@ -17,6 +17,11 @@ begin
 end
 $$ language plpgsql;
 
+drop function if exists now_utc();
+create function now_utc() returns timestamp as $$
+  select (now() at time zone 'utc')
+$$ language sql;
+
 create or replace function coins_per_hour(var_symbol text, var_hashrate numeric, out var_result numeric)
 as $$
 declare
@@ -38,7 +43,7 @@ declare
   var_endtime timestamp;
 begin
   select lastaggregation from meta into var_starttime;
-  select date_trunc('hour', time) from measures order by time desc limit 1 into var_endtime;
+  select date_trunc('minute', time) from measures order by time desc limit 1 into var_endtime;
   select aggregate_measures_between(var_starttime, var_endtime) into result;
   update meta set lastaggregation = var_endtime;
 end
@@ -51,13 +56,15 @@ begin
   with
   aggregation_groups as (
     select distinct
-      groupid,
-      agentid,
-      deviceid,
-      symbol
-    from measures where time between var_starttime and var_endtime
+      device.groupid,
+      device.agentid,
+      measure.deviceid,
+      measure.symbol
+    from measures measure
+      join devices device on device.id = measure.deviceid
+    where measure.time between var_starttime and var_endtime
   ),
-  minute_buckets as (
+  time_buckets as (
     select
       time,
       groupid,
@@ -67,136 +74,66 @@ begin
     from generate_series(var_starttime, var_endtime, '1 minute') time
     join aggregation_groups on 1=1
   ),
-  hour_buckets as (
-    select
-      time,
-      groupid,
-      agentid,
-      deviceid,
-      symbol
-    from generate_series(var_starttime, var_endtime, '1 hour') time
-    join aggregation_groups on 1=1
-  ),
-  samples_by_minute as (
+  device_samples as (
     select
       bucket.time,
       bucket.groupid,
       bucket.agentid,
       bucket.deviceid,
       bucket.symbol,
-      coalesce(avg(hashrate), 0) as avg_hashrate,
-      coins_per_hour(bucket.symbol, coalesce(avg(hashrate), 0)) as avg_coins,
-      avg(load) as avg_load,
-      avg(power) as avg_power,
-      avg(temp) as avg_temp,
-      avg(coreclock) as avg_coreclock,
-      avg(ramclock) as avg_ramclock,
-      avg(fanrpm) as avg_fanrpm,
-      avg(fanpercent) as avg_fanpercent,
-      min(hashrate) as min_hashrate,
-      min(load) as min_load,
-      min(power) as min_power,
-      min(temp) as min_temp,
-      min(coreclock) as min_coreclock,
-      min(ramclock) as min_ramclock,
-      min(fanrpm) as min_fanrpm,
-      min(fanpercent) as min_fanpercent,
-      max(hashrate) as max_hashrate,
-      max(load) as max_load,
-      max(power) as max_power,
-      max(temp) as max_temp,
-      max(coreclock) as max_coreclock,
-      max(ramclock) as max_ramclock,
-      max(fanrpm) as max_fanrpm,
-      max(fanpercent) as max_fanpercent
-    from minute_buckets bucket
-      left join measures m on
-        bucket.time = date_trunc('minute', m.time) and
-        bucket.groupid = m.groupid and
-        bucket.agentid = m.agentid and
-        bucket.deviceid = m.deviceid and
-        bucket.symbol = m.symbol
+      count(*) as numsamples,
+      coalesce(avg(hashrate), 0) as hashrate,
+      coins_per_hour(bucket.symbol, coalesce(avg(hashrate), 0)) as coins,
+      avg(load) as load,
+      avg(power) as power,
+      avg(temp) as temp,
+      avg(coreclock) as coreclock,
+      avg(ramclock) as ramclock,
+      avg(fanrpm) as fanrpm,
+      avg(fanpercent) as fanpercent
+    from time_buckets bucket
+      left join measures measure on
+        bucket.time = date_trunc('minute', measure.time) and
+        bucket.deviceid = measure.deviceid and
+        bucket.symbol = measure.symbol
     group by
       bucket.time, bucket.groupid, bucket.agentid, bucket.deviceid, bucket.symbol
   )
-  insert into aggregates (
+  insert into samples (
     time,
     groupid,
     agentid,
     deviceid,
     symbol,
-    tot_hashrate,
-    tot_coins,
-    avg_hashrate,
-    avg_coins,
-    avg_load,
-    avg_power,
-    avg_temp,
-    avg_coreclock,
-    avg_ramclock,
-    avg_fanrpm,
-    avg_fanpercent,
-    min_hashrate,
-    min_load,
-    min_power,
-    min_temp,
-    min_coreclock,
-    min_ramclock,
-    min_fanrpm,
-    min_fanpercent,
-    max_hashrate,
-    max_load,
-    max_power,
-    max_temp,
-    max_coreclock,
-    max_ramclock,
-    max_fanrpm,
-    max_fanpercent
+    hashrate,
+    coins,
+    load,
+    power,
+    temp,
+    coreclock,
+    ramclock,
+    fanrpm,
+    fanpercent
   )
   select
-    bucket.time,
-    bucket.groupid,
-    bucket.agentid,
-    bucket.deviceid,
-    bucket.symbol,
-    sum(avg_hashrate) as tot_hashrate,
-    sum(avg_coins) as tot_coins,
-    avg(avg_hashrate) as avg_hashrate,
-    avg(avg_coins) as avg_coins,
-    avg(avg_load) as avg_load,
-    avg(avg_power) as avg_power,
-    avg(avg_temp) as avg_temp,
-    avg(avg_coreclock) as avg_coreclock,
-    avg(avg_ramclock) as avg_ramclock,
-    avg(avg_fanrpm) as avg_fanrpm,
-    avg(avg_fanpercent) as avg_fanpercent,
-    min(min_hashrate) as min_hashrate,
-    min(min_coins) as min_coins,
-    min(min_load) as min_load,
-    min(min_power) as min_power,
-    min(min_temp) as min_temp,
-    min(min_coreclock) as min_coreclock,
-    min(min_ramclock) as min_ramclock,
-    min(min_fanrpm) as min_fanrpm,
-    min(min_fanpercent) as min_fanpercent,
-    max(max_hashrate) as max_hashrate,
-    max(max_coins) as max_coins,
-    max(max_load) as max_load,
-    max(max_power) as max_power,
-    max(max_temp) as max_temp,
-    max(max_coreclock) as max_coreclock,
-    max(max_ramclock) as max_ramclock,
-    max(max_fanrpm) as max_fanrpm,
-    max(max_fanpercent) as max_fanpercent
-  from samples_by_minute sample
-    join hour_buckets bucket on
-      bucket.time = date_trunc('minute', sample.time) and
-      bucket.groupid = sample.groupid and
-      bucket.agentid = sample.agentid and
-      bucket.deviceid = sample.deviceid and
-      bucket.symbol = sample.symbol
+    time,
+    groupid,
+    agentid,
+    deviceid,
+    symbol,
+    sum(hashrate) as hashrate,
+    sum(coins) as coins,
+    avg(load) as load,
+    avg(power) as power,
+    avg(temp) as temp,
+    avg(coreclock) as coreclock,
+    avg(ramclock) as ramclock,
+    avg(fanrpm) as fanrpm,
+    avg(fanpercent) as fanpercent
+  from device_samples
+    where numsamples > 0
   group by
-    bucket.time, bucket.groupid, rollup(bucket.agentid, bucket.deviceid), bucket.symbol;
+    time, groupid, rollup(agentid, deviceid), symbol;
 
   return true;
 end

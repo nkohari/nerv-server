@@ -40,7 +40,7 @@ insert into currencies (symbol) values ('INR');
 drop table if exists networkdata;
 create table networkdata (
   id bigint not null primary key default generate_id(),
-  time timestamp not null default now(),
+  time timestamp not null default now_utc(),
   symbol text not null,
   algorithm text not null,
   blockreward numeric(10, 2) not null,
@@ -51,7 +51,7 @@ create table networkdata (
 drop table if exists exchangerates;
 create table exchangerates (
   id bigint not null primary key default generate_id(),
-  time timestamp not null default now(),
+  time timestamp not null default now_utc(),
   symbol text not null,
   currency text not null,
   amount numeric(16, 4) not null
@@ -62,20 +62,21 @@ create table exchangerates (
 drop table if exists users;
 create table users (
   id bigint not null primary key default generate_id(),
-  created timestamp not null default now(),
-  updated timestamp not null default now(),
+  created timestamp not null default now_utc(),
+  updated timestamp not null default now_utc(),
   deleted timestamp,
   version int not null default 1,
-  username text not null,
+  username text not null unique,
   password text not null,
-  email text
+  email text,
+  currency text
 );
 
 drop table if exists groups;
 create table groups (
   id bigint not null primary key default generate_id(),
-  created timestamp not null default now(),
-  updated timestamp not null default now(),
+  created timestamp not null default now_utc(),
+  updated timestamp not null default now_utc(),
   deleted timestamp,
   version int not null default 1,
   name text not null
@@ -84,8 +85,8 @@ create table groups (
 drop table if exists memberships;
 create table memberships (
   id bigint not null primary key default generate_id(),
-  created timestamp not null default now(),
-  updated timestamp not null default now(),
+  created timestamp not null default now_utc(),
+  updated timestamp not null default now_utc(),
   deleted timestamp,
   version int not null default 1,
   userid bigint not null,
@@ -95,8 +96,8 @@ create table memberships (
 drop table if exists agents;
 create table agents (
   id bigint not null primary key default generate_id(),
-  created timestamp not null default now(),
-  updated timestamp not null default now(),
+  created timestamp not null default now_utc(),
+  updated timestamp not null default now_utc(),
   deleted timestamp,
   version int not null default 1,
   groupid bigint,
@@ -106,12 +107,13 @@ create table agents (
 drop table if exists devices;
 create table devices (
   id bigint not null primary key default generate_id(),
-  created timestamp not null default now(),
-  updated timestamp not null default now(),
+  created timestamp not null default now_utc(),
+  updated timestamp not null default now_utc(),
   deleted timestamp,
   version int not null default 1,
   groupid bigint not null,
   agentid bigint not null,
+  name text not null,
   type text not null,
   vendor text not null,
   model text not null
@@ -120,9 +122,7 @@ create table devices (
 drop table if exists measures;
 create table measures (
   id bigint not null primary key default generate_id(),
-  time timestamp not null default now(),
-  groupid bigint not null,
-  agentid bigint not null,
+  time timestamp not null default now_utc(),
   deviceid bigint not null,
   symbol text,
   hashrate int,
@@ -135,39 +135,21 @@ create table measures (
   fanrpm smallint
 );
 
-drop table if exists aggregates;
-create table aggregates (
+drop table if exists samples;
+create table samples (
   id bigint not null primary key default generate_id(),
   time timestamp not null,
   groupid bigint,
   agentid bigint,
   deviceid bigint,
   symbol text,
-  tot_hashrate bigint,
-  tot_coins numeric(20, 10),
-  avg_hashrate int,
-  avg_coins numeric(20, 10),
-  avg_load numeric(5, 4),
-  avg_power numeric(4, 2),
-  avg_coreclock smallint,
-  avg_ramclock smallint,
-  avg_temp smallint,
-  avg_fanpercent numeric(5, 4),
-  avg_fanrpm smallint,
-  min_hashrate int,
-  min_load numeric(5, 4),
-  min_power numeric(4, 2),
-  min_coreclock smallint,
-  min_ramclock smallint,
-  min_temp smallint,
-  min_fanpercent numeric(5, 4),
-  min_fanrpm smallint,
-  max_hashrate int,
-  max_load numeric(5, 4),
-  max_power numeric(4, 2),
-  max_coreclock smallint,
-  max_ramclock smallint,
-  max_temp smallint,
-  max_fanpercent numeric(5, 4),
-  max_fanrpm smallint
+  hashrate int,
+  coins numeric(20, 10),
+  load numeric(5, 4),
+  power numeric(4, 2),
+  coreclock smallint,
+  ramclock smallint,
+  temp smallint,
+  fanpercent numeric(5, 4),
+  fanrpm smallint
 );
