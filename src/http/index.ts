@@ -1,1 +1,1 @@
-export { default as MinebossServer } from './MinebossServer';
+export { default as NervServer } from './NervServer';

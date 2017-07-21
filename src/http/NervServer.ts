@@ -8,7 +8,7 @@ import { Gatekeeper, MessageBus } from 'src/common';
 import { Handler, HandlerClass, Precondition, PreconditionClass } from 'src/http/framework';
 import * as handlers from 'src/http/handlers';
 
-class MinebossServer {
+class NervServer {
 
   forge: Forge;
   log: Logger;
@@ -126,4 +126,4 @@ class MinebossServer {
 
 }
 
-export default MinebossServer;
+export default NervServer;

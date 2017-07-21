@@ -42,7 +42,7 @@ class CreateUserHandler extends Handler {
     const plaintext = request.payload.password;
 
     return this.keymaster.hashPassword(plaintext).then(password => {
-      const command = new CreateUserCommand({ username, email, password });
+      const command = new CreateUserCommand({ username, email, password, currency: 'USD' });
       this.database.run(command).then(result => {
         const { user, group, membership } = result;
         this.associateAgent(group, agentid).then(agent => {

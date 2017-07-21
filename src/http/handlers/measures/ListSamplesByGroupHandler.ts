@@ -11,7 +11,7 @@ class ListSamplesByGroupHandler extends Handler {
 
   static validate = {
     query: {
-      period: Joi.string().regex(/\d+\s+[(months?)|(weeks?)|(days?)|(hours?)|(minutes?)]/)
+      period: Joi.string().regex(/\d+\s+[(months?)|(weeks?)|(days?)|(hours?)|(minutes?)]/).required()
     }
   };
 

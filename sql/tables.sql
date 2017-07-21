@@ -69,7 +69,7 @@ create table users (
   username text not null unique,
   password text not null,
   email text,
-  currency text
+  currency text not null
 );
 
 drop table if exists groups;

@@ -1,7 +1,7 @@
 {
-  "name": "mineboss-server",
+  "name": "nerv-server",
   "version": "0.1.0",
-  "description": "management api for mineboss",
+  "description": "management api for nerv.io",
   "engines": {
     "node": "^6.9.0",
     "npm": "5"
