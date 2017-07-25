@@ -46,6 +46,7 @@
     "@types/nconf": "^0.0.34",
     "@types/nes": "^6.2.8",
     "@types/node": "^6.0.79",
+    "nerv-tslint-rules": "github:nkohari/nerv-tslint-rules",
     "nodemon": "^1.11.0",
     "tsconfig-paths": "^2.2.0",
     "tslint": "^5.4.3",
